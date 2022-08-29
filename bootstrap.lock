@@ -1,0 +1,3 @@
+version: v10.2.1 # faking this for opslevel
+versions:
+    devbase: v2.2.1

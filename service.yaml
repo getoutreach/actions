@@ -1,0 +1,16 @@
+name: actions
+modules:
+  - name: github.com/getoutreach/stencil-base
+  - name: github.com/getoutreach/stencil-outreach
+  - name: github.com/getoutreach/stencil-circleci
+  - name: github.com/getoutreach/stencil-golang
+  - name: github.com/getoutreach/stencil-opslevel
+arguments:
+  reportingTeam: fnd-dt
+  description: Defines GitHub action workflows and runners as docker images for those workflows.
+  service: false
+  lintroller: platinum
+  oss: false
+  releaseOptions:
+    allowMajorVersions: null
+    enablePrereleases: false
