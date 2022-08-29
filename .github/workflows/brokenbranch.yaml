@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+name: brokenbranch
+on:
+  workflow_call:
+    secrets:
+      OUTREACH_DOCKER_JSON:
+        required: true
+      PAT_OUTREACH_CI:
+        required: false
+      SLACK_TOKEN:
+        required: true
+
+      # These secrets are only required if dm_committer is set to true.
+      #
+      # These all come from a GitHub app for an organization. The app
+      # needs administrative read permissions. A PAT generated for the
+      # app will not work - you have to use private key authorization
+      # through HTTP transport for some reason. Super annoying.
+      GH_APP_ID:
+        required: false
+      GH_APP_INSTALLATION_ID:
+        required: false
+      GH_APP_PRIVATE_KEY_BASE64:
+        required: false
+    inputs:
+      image_tag:
+        type: string
+        default: latest
+        required: false
+      branch:
+        type: string
+        default: main
+        required: false
+      slack_channel:
+        type: string
+        required: true
+
+      # If this is set to true the GH_APP_* secrets need to also be set.
+      dm_committer:
+        type: boolean
+        default: false
+        required: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    container:
+      image: gcr.io/outreach-docker/actions/brokenbranch:${{ inputs.image_tag }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
+        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        GITHUB_BRANCH: ${{ inputs.branch }}
+        SLACK_CHANNEL: ${{ inputs.slack_channel }}
+        DM_COMMITTER: ${{ inputs.dm_committer }}
+        GH_APP_ID: ${{ secrets.GH_APP_ID }}
+        GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}
+        GH_APP_PRIVATE_KEY_BASE64: ${{ secrets.GH_APP_PRIVATE_KEY_BASE64 }}
+      credentials:
+        username: _json_key
+        password: ${{ secrets.OUTREACH_DOCKER_JSON }}
+    steps:
+      - run: /usr/local/bin/action
