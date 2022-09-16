@@ -93,7 +93,6 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 	awsAccessKeyId := strings.TrimSpace(os.Getenv("AWS_ACCESS_KEY_ID"))
 	region := strings.TrimSpace(os.Getenv("AWS_REGION"))
 
-	// Download schema config from S3
 	sess, err := session.NewSession(&aws.Config{
 		Region:      region,
 		Credentials: credentials.NewStaticCredentials(awsAccessKeyId, awsSecretAccessKey, ""),
@@ -104,6 +103,7 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 	}
 	s3Client := s3.New(sess)
 	prefix := commonConfig.ProtobufS3Prefix
+	// Get latest timestamp of schema configs from S3
 	maxTime, err := GetSchemaConfigLatestTimestamp(commonConfig.S3Bucket, prefix, s3Client, ctx, client)
 	if err != nil {
 		fmt.Printf("error while dowloading schema config from S3: %v\n", err)
@@ -143,22 +143,27 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 		ref, err := getRef()
 		if err != nil {
 			log.Fatalf("Unable to get/create the commit reference: %s\n", err)
+			return err
 		}
 		if ref == nil {
 			log.Fatalf("No error where returned but the reference is nil")
+			return err
 		}
 
 		tree, err := getTree(ref)
 		if err != nil {
 			log.Fatalf("Unable to create the tree based on the provided files: %s\n", err)
+			return err
 		}
 
 		if err := pushCommit(ref, tree); err != nil {
 			log.Fatalf("Unable to create the commit: %s\n", err)
+			return err
 		}
 
 		if err := createPR(); err != nil {
 			log.Fatalf("Error while creating the pull request: %s", err)
+			return err
 		}
 
 		RunCommand("rm", "-rf", "out") 
