@@ -180,7 +180,7 @@ func Initialize()
 
 // There are the configs of the schemas that are registered in schema registry and uploaded to S3
 // It goes over the entire folder in s3 and returns the latest timestamp of the files in that folder
-func GetSchemaConfigLatestTimestamp(bucket, prefix, s3Client S3Client, 
+func GetSchemaConfigLatestTimestamp(bucket, prefix, s3Client *S3Client,
 	ctx context.Context, client *github.Client) (time.Time, error) {
 
 	input := &s3.ListObjectsV2Input{
