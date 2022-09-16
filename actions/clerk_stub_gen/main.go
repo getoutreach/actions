@@ -166,6 +166,7 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 			return err
 		}
 
+		// run cleanups
 		RunCommand("rm", "-rf", "out") 
 	}
 
@@ -346,9 +347,12 @@ func DownloadReleaseAsset(ctx context.Context, client *github.Client) (string, e
 		fmt.Printf("Repositories.ListReleases returned error: %v", err)
 		return err
 	}
+
+	// sort descendingly in terms of PublishedAt
 	slice.Sort(releases[:], func(i, j int) bool {
 		return *releases[i].PublishedAt.After(*releases[j].PublishedAt)
 	})
+
 	assetName := "clerkgen_" + (*releases[0].TagName)[1:] + "_linux_arm64.tar.gz"
 	assets, _, err2 := client.Repositories.ListReleaseAssets(ctx, "getoutreach", "clerkgen", releases[0].ID, nil)
 	if err2 != nil {
