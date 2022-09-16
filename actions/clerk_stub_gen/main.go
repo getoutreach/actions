@@ -361,7 +361,7 @@ func DownloadReleaseAsset(ctx context.Context, client *github.Client) (string, e
 		} 
 	}
 
-	reader, _, err3 := client.Repositories.DownloadReleaseAsset(ctx, "getoutreach", "clerkgen", assetId, http.DefaultClient)
+	reader, _, err3 := client.Repositories.DownloadReleaseAsset(ctx, "getoutreach", "clerkgenproto", assetId, http.DefaultClient)
 	_, err3 = ioutil.ReadAll(reader)
 	if err3 != nil {
 		fmt.Printf("Repositories.DownloadReleaseAsset returned error: %v", err3)
