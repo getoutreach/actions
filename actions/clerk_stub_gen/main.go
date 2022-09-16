@@ -50,9 +50,8 @@ var prRepoOwner *string
 var prSubject *string
 var prBranch *string
 var prDescription *string
+var ctx context.Context
 
-
-var ctx = context.Background()
 
 func main() {
 	exitCode := 1
@@ -125,21 +124,9 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 		sourceFiles, err = GetSourceFiles("./out")
 
-		*sourceOwner = "getoutreach"
-		*sourceRepo = "clerkcommons"
-		*authorName = "Outreach CI"
-		*authorEmail = "outreach-ci@users.noreply.github.com"
-		*commitBranch = "feature"
-		*baseBranch = "main"
-		*commitMessage = "Generate new clerk stubs"
-
-		*prRepo = ""
-		*prRepoOwner = ""
-		*prBranch = "main"
-		*prDescription = "Generate new clerk stubs"
-
 		// create pull request on a branch
 		// example is here: https://github.com/google/go-github/blob/master/example/commitpr/main.go
+		Initialize()
 		ref, err := getRef()
 		if err != nil {
 			log.Fatalf("Unable to get/create the commit reference: %s\n", err)
@@ -173,6 +160,23 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 	return nil
 }
 
+
+// Set variables used for submitting PRs
+func Initialize()
+{
+	*sourceOwner = "getoutreach"
+	*sourceRepo = "clerkcommons"
+	*authorName = "Outreach CI"
+	*authorEmail = "outreach-ci@users.noreply.github.com"
+	*commitBranch = "feature"
+	*baseBranch = "main"
+	*commitMessage = "Generate new clerk stubs"
+	*prRepo = ""
+	*prRepoOwner = ""
+	*prBranch = "main"
+	*prSubject = "feat: generate new clerk stubs"
+	*prDescription = "Generate new clerk stubs"
+}
 
 // There are the configs of the schemas that are registered in schema registry and uploaded to S3
 // It goes over the entire folder in s3 and returns the latest timestamp of the files in that folder
