@@ -365,7 +365,7 @@ func DownloadReleaseAsset(ctx context.Context, client *github.Client) (string, e
 	for _, item := range assets {
 		if *item.Name == assetName {
 
-			assetId = item.Id
+			assetId = item.ID
 			break
 		} 
 	}
