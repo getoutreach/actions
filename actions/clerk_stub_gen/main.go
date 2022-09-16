@@ -130,12 +130,12 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 		*authorName = "Outreach CI"
 		*authorEmail = "outreach-ci@users.noreply.github.com"
 		*commitBranch = "feature"
-		*baseBranch = "master"
+		*baseBranch = "main"
 		*commitMessage = "Generate new clerk stubs"
 
 		*prRepo = ""
 		*prRepoOwner = ""
-		*prBranch = "master"
+		*prBranch = "main"
 		*prDescription = "Generate new clerk stubs"
 
 		// create pull request on a branch
