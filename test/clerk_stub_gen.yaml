@@ -1,2 +1,25 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow
 name: clerk_stub_gen local test
+on: pull_request
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    container:
+      image: gcr.io/outreach-docker/actions/clerk_stub_gen:local
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        GITHUB_BRANCH: ${{ inputs.branch }}
+        SLACK_CHANNEL: ${{ inputs.slack_channel }}
+        DM_COMMITTER: ${{ inputs.dm_committer }}
+        GH_APP_ID: ${{ secrets.GH_APP_ID }}
+        GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}
+        GH_APP_PRIVATE_KEY_BASE64: ${{ secrets.GH_APP_PRIVATE_KEY_BASE64 }}
+    steps:
+      - run: /usr/local/bin/action

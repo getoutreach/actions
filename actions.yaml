@@ -3,3 +3,7 @@ actions:
   - commitguard
   - brokenbranch
   - clerk_stub_gen
+  - test
+  - test
+  - test
+  - test
