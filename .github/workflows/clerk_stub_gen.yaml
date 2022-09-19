@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow
-name: brokenbranch
+name: clerk_stub_gen
 on:
   workflow_call:
     secrets:

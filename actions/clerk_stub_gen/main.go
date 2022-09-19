@@ -1,4 +1,4 @@
-package s3poking
+package main
 
 import (
 	"io/ioutil"
