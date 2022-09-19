@@ -52,7 +52,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     container:
-      image: gcr.io/outreach-docker/actions/brokenbranch:${{ inputs.image_tag }}
+      image: gcr.io/outreach-docker/actions/clerk_stub_gen:${{ inputs.image_tag }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
