@@ -11,13 +11,14 @@ import (
 	"os/exec"
 	"log"
 	"net/http"
+	"sort"
 
 	// "github.com/pkg/errors"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/aws/credentials"
+	// "github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/getoutreach/actions/internal/gh"
 	"github.com/google/go-github/v47/github"
 	actions "github.com/sethvargo/go-githubactions"
@@ -88,22 +89,21 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 	// githubBranch := strings.TrimSpace(os.Getenv("GITHUB_BRANCH"))
 	// slackChannel := strings.TrimSpace(os.Getenv("SLACK_CHANNEL"))
-	awsSecretAccessKey := strings.TrimSpace(os.Getenv("AWS_SECRET_ACCESS_KEY"))
-	awsAccessKeyId := strings.TrimSpace(os.Getenv("AWS_ACCESS_KEY_ID"))
+	// awsSecretAccessKey := strings.TrimSpace(os.Getenv("AWS_SECRET_ACCESS_KEY"))
+	// awsAccessKeyId := strings.TrimSpace(os.Getenv("AWS_ACCESS_KEY_ID"))
 	region := strings.TrimSpace(os.Getenv("AWS_REGION"))
 
 	sess, err := session.NewSession(&aws.Config{
-		Region:      region,
-		Credentials: credentials.NewStaticCredentials(awsAccessKeyId, awsSecretAccessKey, ""),
+		Region:      aws.String(region),
+		// Credentials: credentials.NewStaticCredentials(awsAccessKeyId, awsSecretAccessKey, ""),
 	})
 	if err != nil {
 		fmt.Printf("failed to create s3 client with reason: %v\n", err)
 		return err
 	}
 	s3Client := s3.New(sess)
-	prefix := commonConfig.ProtobufS3Prefix
 	// Get latest timestamp of schema configs from S3
-	maxTime, err := GetSchemaConfigLatestTimestamp(commonConfig.S3Bucket, prefix, s3Client, ctx, client)
+	maxTime, err := GetSchemaConfigLatestTimestamp(commonConfig.S3Bucket, commonConfig.ProtobufS3Prefix, s3Client, ctx)
 	if err != nil {
 		fmt.Printf("error while dowloading schema config from S3: %v\n", err)
 		return err
@@ -120,9 +120,9 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 		// run clerkgen
 		RunCommand("tar", "-xzvf", "clerkgen_" + tagName + "_linux_arm64.tar.gz") 
-		RunCommand("clerkgen_" + tagName + "_linux_arm64"+"/clerkgenproto", "--out-dir", "out", "--all-schemas", "-l", "go")
+		RunCommand("./clerkgenproto", "--out-dir", "out", "--all-schemas", "-l", "go")
 
-		sourceFiles, err = GetSourceFiles("./out")
+		sourceFiles, err = strings.Join(GetSourceFiles("./out"), ",")
 
 		// create pull request on a branch
 		// example is here: https://github.com/google/go-github/blob/master/example/commitpr/main.go
@@ -175,13 +175,13 @@ func Initialize()
 	*prRepoOwner = ""
 	*prBranch = "main"
 	*prSubject = "feat: generate new clerk stubs"
-	*prDescription = "Generate new clerk stubs"
+	*prDescription = "Automatically generate new clerk stubs per hour"
 }
 
 // There are the configs of the schemas that are registered in schema registry and uploaded to S3
 // It goes over the entire folder in s3 and returns the latest timestamp of the files in that folder
-func GetSchemaConfigLatestTimestamp(bucket, prefix, s3Client *S3Client,
-	ctx context.Context, client *github.Client) (time.Time, error) {
+func GetSchemaConfigLatestTimestamp(bucket string, prefix string, s3Client S3Client,
+	ctx context.Context) (time.Time, error) {
 
 	input := &s3.ListObjectsV2Input{
 		Bucket: aws.String(bucket),
@@ -348,19 +348,22 @@ func createPR() (err error) {
 func DownloadReleaseAsset(ctx context.Context, client *github.Client) (string, error) {
 	releases, _, err :=  client.Repositories.ListReleases(ctx, "getoutreach", "clerkgen", nil)
 	if err != nil {
-		fmt.Printf("Repositories.ListReleases returned error: %v", err)
-		return err
+		fmt.Printf("Repositories.ListReleases with owner %s and repo %s returned error: %v", 
+				   "getoutreach", "clerkgen", err)
+		return "", err
 	}
 
 	// sort descendingly in terms of PublishedAt
-	slice.Sort(releases[:], func(i, j int) bool {
-		return *releases[i].PublishedAt.After(*releases[j].PublishedAt)
+	sort.Slice(releases, func(i, j int) bool {
+		return (*releases[i].PublishedAt).Time.After((*releases[j].PublishedAt).Time)
 	})
 
+	// clerkgen_1.27.4_linux_amd64.tar.gz
 	assetName := "clerkgen_" + (*releases[0].TagName)[1:] + "_linux_arm64.tar.gz"
-	assets, _, err2 := client.Repositories.ListReleaseAssets(ctx, "getoutreach", "clerkgen", releases[0].ID, nil)
+	assets, _, err2 := client.Repositories.ListReleaseAssets(ctx, "getoutreach", "clerkgen", *releases[0].ID, nil)
 	if err2 != nil {
-		fmt.Printf("Repositories.ListReleaseAssets returned error: %v", err2)
+		fmt.Printf("Repositories.ListReleaseAssets with owner %s and repo %s returned error: %v", 
+				   "getoutreach", "clerkgen", err2)
 		return "", err2
 	}
 
@@ -369,17 +372,25 @@ func DownloadReleaseAsset(ctx context.Context, client *github.Client) (string, e
 	for _, item := range assets {
 		if *item.Name == assetName {
 
-			assetId = item.ID
+			assetId = *item.ID
 			break
 		} 
 	}
 
-	reader, _, err3 := client.Repositories.DownloadReleaseAsset(ctx, "getoutreach", "clerkgenproto", assetId, http.DefaultClient)
-	_, err3 = ioutil.ReadAll(reader)
+	reader, _, err3 := client.Repositories.DownloadReleaseAsset(ctx, "getoutreach", "clerkgen",
+																assetId, http.DefaultClient)
 	if err3 != nil {
-		fmt.Printf("Repositories.DownloadReleaseAsset returned error: %v", err3)
+		fmt.Printf("Repositories.DownloadReleaseAsset with owner %s and repo %s returned error: %v", 
+				   "getoutreach", "clerkgen", err3)
 		return "", err3
 	}
+	data, err3 = ioutil.ReadAll(reader)
+	if err3 != nil {
+		fmt.Printf("Repositories.DownloadReleaseAsset with owner %s and repo %s returned bad reader: %v", 
+				   "getoutreach", "clerkgen", err3)
+		return "", err3
+	}
+	ioutil.WriteFile(assetName, data, 0755)
 	reader.Close()
 	return (*releases[0].TagName)[1:], nil
 }
@@ -400,8 +411,8 @@ func RunCommand(program string, args ...string) {
     fmt.Println(string(stdout))
 }
 
-func GetSourceFiles(dir string) (*string, error) {
-	var files *string
+func GetSourceFiles(dir string) ([]string, error) {
+	var files []string
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
         if err != nil {
@@ -410,7 +421,7 @@ func GetSourceFiles(dir string) (*string, error) {
         }
 
 		if (!info.IsDir()) {
-			*files = *files + "," + path
+			files = append(files, path)
 		}
 
         fmt.Printf("dir: %v: name: %s\n", info.IsDir(), path)
