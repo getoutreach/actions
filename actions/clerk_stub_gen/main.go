@@ -63,9 +63,10 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*5)
 	defer cancel()
 
-	client, err := gh.NewClient(ctx, false)
-	if err != nil {
-		actions.Errorf("create github client: %v", err)
+	var client_err error
+	client, client_err = gh.NewClient(ctx, false)
+	if client_err != nil {
+		actions.Errorf("create github client: %v", client_err)
 		return
 	}
 
