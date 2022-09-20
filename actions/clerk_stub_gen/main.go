@@ -124,7 +124,7 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 		RunCommand("tar", "-xzvf", "clerkgen_" + tagName + "_linux_arm64.tar.gz") 
 		RunCommand("./clerkgenproto", "--out-dir", "out", "--all-schemas", "-l", "go")
 
-		sourceFileList, err := GetSourceFiles(".")
+		sourceFileList, err := GetSourceFiles("./out")
 		if err != nil {
 			fmt.Printf("GetSourceFiles with %v error\n", err)
 			return err
