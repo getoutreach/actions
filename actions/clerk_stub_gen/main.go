@@ -130,27 +130,27 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 		Initialize()
 		ref, err := getRef()
 		if err != nil {
-			log.Fatalf("Unable to get/create the commit reference: %s\n", err)
+			fmt.Printf("Unable to get/create the commit reference: %s\n", err)
 			return err
 		}
 		if ref == nil {
-			log.Fatalf("No error where returned but the reference is nil")
+			fmt.Printf("No error where returned but the reference is nil")
 			return err
 		}
 
 		tree, err := getTree(ref)
 		if err != nil {
-			log.Fatalf("Unable to create the tree based on the provided files: %s\n", err)
+			fmt.Printf("Unable to create the tree based on the provided files: %s\n", err)
 			return err
 		}
 
 		if err := pushCommit(ref, tree); err != nil {
-			log.Fatalf("Unable to create the commit: %s\n", err)
+			fmt.Printf("Unable to create the commit: %s\n", err)
 			return err
 		}
 
 		if err := createPR(); err != nil {
-			log.Fatalf("Error while creating the pull request: %s", err)
+			fmt.Printf("Error while creating the pull request: %s", err)
 			return err
 		}
 
@@ -163,8 +163,7 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 
 // Set variables used for submitting PRs
-func Initialize()
-{
+func Initialize() {
 	*sourceOwner = "getoutreach"
 	*sourceRepo = "clerkcommons"
 	*authorName = "Outreach CI"
