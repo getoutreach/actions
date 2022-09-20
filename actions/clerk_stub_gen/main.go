@@ -124,14 +124,20 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 		RunCommand("tar", "-xzvf", "clerkgen_" + tagName + "_linux_arm64.tar.gz") 
 		RunCommand("./clerkgenproto", "--out-dir", "out", "--all-schemas", "-l", "go")
 
-		sourceFiles, err = strings.Join(GetSourceFiles("./out"), ",")
+		sourceFileList, err := GetSourceFiles(".")
+		if err != nil {
+			fmt.Printf("GetSourceFiles with %v error\n", err)
+			return err
+		}
+		sourceFilesRaw := strings.Join(sourceFileList, ",")
+		sourceFiles = &sourceFilesRaw
 
 		// create pull request on a branch
 		// example is here: https://github.com/google/go-github/blob/master/example/commitpr/main.go
 		Initialize()
 		ref, err := getRef()
 		if err != nil {
-			fmt.Printf("Unable to get/create the commit reference: %s\n", err)
+			fmt.Printf("Unable to get/create the commit reference: %v\n", err)
 			return err
 		}
 		if ref == nil {
@@ -141,17 +147,17 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 		tree, err := getTree(ref)
 		if err != nil {
-			fmt.Printf("Unable to create the tree based on the provided files: %s\n", err)
+			fmt.Printf("Unable to create the tree based on the provided files: %v\n", err)
 			return err
 		}
 
 		if err := pushCommit(ref, tree); err != nil {
-			fmt.Printf("Unable to create the commit: %s\n", err)
+			fmt.Printf("Unable to create the commit: %v\n", err)
 			return err
 		}
 
 		if err := createPR(); err != nil {
-			fmt.Printf("Error while creating the pull request: %s", err)
+			fmt.Printf("Error while creating the pull request: %v", err)
 			return err
 		}
 
@@ -397,7 +403,7 @@ func DownloadReleaseAsset(ctx context.Context, client *github.Client) (string, e
 				   "getoutreach", "clerkgen", err3)
 		return "", err3
 	}
-	data, err3 = ioutil.ReadAll(reader)
+	data, err3 := ioutil.ReadAll(reader)
 	if err3 != nil {
 		fmt.Printf("Repositories.DownloadReleaseAsset with owner %s and repo %s returned bad reader: %v", 
 				   "getoutreach", "clerkgen", err3)
