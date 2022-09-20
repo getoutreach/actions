@@ -60,7 +60,8 @@ func main() {
 		os.Exit(exitCode)
 	}()
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*5)
+	var cancel context.CancelFunc
+	ctx, cancel = context.WithTimeout(context.Background(), time.Minute*5)
 	defer cancel()
 
 	var client_err error
@@ -164,18 +165,30 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 // Set variables used for submitting PRs
 func Initialize() {
-	*sourceOwner = "getoutreach"
-	*sourceRepo = "clerkcommons"
-	*authorName = "Outreach CI"
-	*authorEmail = "outreach-ci@users.noreply.github.com"
-	*commitBranch = "feature"
-	*baseBranch = "main"
-	*commitMessage = "Generate new clerk stubs"
-	*prRepo = ""
-	*prRepoOwner = ""
-	*prBranch = "main"
-	*prSubject = "feat: generate new clerk stubs"
-	*prDescription = "Automatically generate new clerk stubs per hour"
+	tmp := "getoutreach"
+	sourceOwner = &tmp
+	tmp2 := "clerkcommons"
+	sourceRepo = &tmp2
+	tmp3 := "Outreach CI"
+	authorName = &tmp3
+	tmp4 := "outreach-ci@users.noreply.github.com"
+	authorEmail = &tmp4
+	tmp5 := "feature"
+	commitBranch = &tmp5
+	tmp6 := "main"
+	baseBranch = &tmp6
+	tmp7 := "Generate new clerk stubs"
+	commitMessage = &tmp7
+	tmp8 := ""
+	prRepo = &tmp8
+	tmp9 := ""
+	prRepoOwner = &tmp9
+	tmp10 := "main"
+	prBranch = &tmp10
+	tmp11 := "feat: generate new clerk stubs"
+	prSubject = &tmp11
+	tmp12 := "Automatically generate new clerk stubs per hour"
+	prDescription = &tmp12
 }
 
 // There are the configs of the schemas that are registered in schema registry and uploaded to S3
