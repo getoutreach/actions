@@ -20,8 +20,6 @@ import (
 	// "github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/getoutreach/actions/internal/gh"
 	"github.com/google/go-github/v47/github"
-	"github.com/getoutreach/gobox/pkg/cli/updater/release"
-	"github.com/getoutreach/gobox/pkg/cfg"
 	actions "github.com/sethvargo/go-githubactions"
 	commonConfig "github.com/getoutreach/clerkgen/cmd/config"
 )
@@ -141,6 +139,7 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 		// we have some new changes in the past hour
 		if len(schemaNames) > 0 {
 
+			// run clerkgenproto
 			runCommand("git pull")
 
 			runCommand("make gogenerate")
