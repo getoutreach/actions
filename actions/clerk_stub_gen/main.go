@@ -29,6 +29,7 @@ import (
 const (
 	format = "2006-Jan-02"
 	tagName = "v1.27.4"
+	subdir = "pkg/schema"
 )
 
 var (
@@ -151,7 +152,7 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 			// construct parameters passed into clerkgenproto 
 			args := []string{}
 			args = append(args, "--out-dir")
-			args = append(args, "pkg/schema/")
+			args = append(args, subdir)
 			args = append(args, "-l")
 			args = append(args, "go")
 			for _, name := range schemaNames {
@@ -225,7 +226,7 @@ func getChangedSchemaNames(s3Bucket string, s3Prefix string, s3Client S3Client,
 
 // Set parameters used for creating PRs
 func initialize() (*PullRequestArg, error) {
-	sourceFileList, err := getSourceFiles("./out")
+	sourceFileList, err := getSourceFiles(subdir)
 	if err != nil {
 		fmt.Printf("getSourceFiles with %v error\n", err)
 		return nil, err
