@@ -335,7 +335,7 @@ func getAllSchemaChangesInLastHour(bucket string, prefix string, s3Client S3Clie
 		out, err := s3Client.ListObjectsV2(input)
 		if err != nil {
 			return maxTime, oldMaxTime, latestObj, oldLatestObj, 
-				   fmt.Errorf("error listing objects for bucket '%s' and prefix '%s", bucket, prefix)
+				fmt.Errorf("error listing objects for bucket '%s' and prefix '%s", bucket, prefix)
 		}
 		for _, obj := range out.Contents {
 			if obj.LastModified.After(maxTime) {
@@ -356,7 +356,7 @@ func getAllSchemaChangesInLastHour(bucket string, prefix string, s3Client S3Clie
 
 	if latestObj == nil {
 		return maxTime, oldMaxTime, latestObj, oldLatestObj,
-		       fmt.Errorf("no objects found in bucket '%s' and prefix '%s", bucket, prefix)
+			fmt.Errorf("no objects found in bucket '%s' and prefix '%s", bucket, prefix)
 	}
 
 	return maxTime, oldMaxTime, latestObj, oldLatestObj, nil
