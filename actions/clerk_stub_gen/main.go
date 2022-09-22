@@ -522,17 +522,17 @@ func getSourceFiles(dir string) ([]string, error) {
             return err
         }
 		
-		if (!info.IsDir()) {
-			files = append(files, path)
-		}
+	    if (!info.IsDir()) {
+		    files = append(files, path)
+	    }
 
         fmt.Printf("dir: %v: name: %s\n", info.IsDir(), path)
         return nil
     })
 	
-	if err != nil {
-		fmt.Println("Walking direction failed with %v error", err)
-		return nil, err
+    if err != nil {
+	    fmt.Println("Walking direction failed with %v error", err)
+	    return nil, err
     }
 	
 	return files, err
