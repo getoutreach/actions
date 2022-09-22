@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"os/exec"
 	"encoding/json"
-    "math/rand"
+	"math/rand"
 
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -138,30 +138,14 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 			return err
 		}
 
+		// we have some new changes in the past hour
 		if len(schemaNames) > 0 {
-			// download the clerkgen cli with the given tag
-			err = downloadReleaseAsset(ctx)
-			if err != nil {
-				fmt.Printf("downloadReleaseAsset returned error: %v", err)
-				return err
-			}
 
-			// run untar clerkgen
-			runCommand("tar", "-xzvf", "clerkgen_" + tagName[1:] + "_linux_amd64.tar.gz") 
-		
-			// construct parameters passed into clerkgenproto 
-			args := []string{}
-			args = append(args, "--out-dir")
-			args = append(args, subdir)
-			args = append(args, "-l")
-			args = append(args, "go")
-			for _, name := range schemaNames {
-				args = append(args, "--sn")
-				args = append(args, name)
-			}
+			runCommand("git pull")
 
-			// run clerkgenproto
-			runCommand("./clerkgenproto", args...)
+			runCommand("make gogenerate")
+
+			runCommand("make fmt")
 
 			// intialize parameters used to create pull requests
 			pullRequestArg, err := initialize()
@@ -515,31 +499,6 @@ func createPR(pullRequestArg *PullRequestArg, client *github.Client, ctx context
 	return nil
 }
 
-// download the clerkgen cli with the given tag
-func downloadReleaseAsset(ctx context.Context) error {
-	opts := &release.FetchOptions{
-		RepoURL:   "https://github.com/getoutreach/clerkgen",
-		Tag:       tagName,
-		AssetName: "clerkgen_" + tagName[1:] + "_linux_amd64.tar.gz",
-	}
-	token := (cfg.SecretData)(os.Getenv("GITHUB_TOKEN"))
-	rc, _, _, err := release.Fetch(ctx, token, opts)
-	if err != nil {
-		fmt.Printf("Fetch asset failed with %v error", err)
-		return err
-	}
-
-	data, err := ioutil.ReadAll(rc)
-	if err != nil {
-		fmt.Printf("Read asset failed with %v error", err)
-		return err
-	}
-	ioutil.WriteFile("clerkgen_" + tagName[1:] + "_linux_amd64.tar.gz", data, 0755)
-	rc.Close()
-	return nil
-}
-
-
 // Run command-line tool with variable arguments
 func runCommand(program string, args ...string) {
 	cmd := exec.Command(program, args...)
@@ -549,7 +508,7 @@ func runCommand(program string, args ...string) {
 
 	if err := cmd.Run(); err != nil { 
 		fmt.Println(err.Error())
-        return 
+		return 
 	}
 }
 
@@ -562,7 +521,7 @@ func getSourceFiles(dir string) ([]string, error) {
             fmt.Println(err)
             return err
         }
-
+		
 		if (!info.IsDir()) {
 			files = append(files, path)
 		}
@@ -570,11 +529,11 @@ func getSourceFiles(dir string) ([]string, error) {
         fmt.Printf("dir: %v: name: %s\n", info.IsDir(), path)
         return nil
     })
-
-    if err != nil {
-        fmt.Println("Walking direction failed with %v error", err)
+	
+	if err != nil {
+		fmt.Println("Walking direction failed with %v error", err)
 		return nil, err
     }
-
+	
 	return files, err
 }
