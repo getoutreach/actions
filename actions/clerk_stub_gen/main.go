@@ -131,13 +131,6 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 	if now.After(maxTime) && now.Add(-1 * time.Hour).Before(maxTime) {
 
-		// // get the given asset of the latest release
-		// tagName, err := downloadReleaseAsset(ctx, client)
-		// if err != nil {
-		// 	fmt.Printf("DownloadReleaseAsset returned error: %v", err)
-		// 	return err
-		// }
-
 		// Get the names of schemas changed during the past hour
 		schemaNames, err := getChangedSchemaNames(commonConfig.S3Bucket, commonConfig.ProtobufS3Prefix, 
 			s3Client, oldLatestObj, latestObj)
@@ -148,14 +141,14 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 		if len(schemaNames) > 0 {
 			// download the clerkgen cli with the given tag
-			err = downloadReleaseAssetViaGobox(ctx, tagName)
+			err = downloadReleaseAssetViaGobox(ctx)
 			if err != nil {
 				fmt.Printf("downloadReleaseAssetViaGobox returned error: %v", err)
 				return err
 			}
 
 			// run untar clerkgen
-			runCommand("tar", "-xzvf", "clerkgen_" + tagName + "_linux_arm64.tar.gz") 
+			runCommand("tar", "-xzvf", "clerkgen_" + tagName[1:] + "_linux_amd64.tar.gz") 
 		
 			// construct parameters passed into clerkgenproto 
 			args := []string{}
@@ -523,58 +516,8 @@ func createPR(pullRequestArg *PullRequestArg, client *github.Client, ctx context
 	return nil
 }
 
-// // Download the given asset with the latest release of clerkgen
-// func downloadReleaseAsset(ctx context.Context, client *github.Client) (string, error) {
-// 	releases, _, err :=  client.Repositories.ListReleases(ctx, "getoutreach", "clerkgen", nil)
-// 	if err != nil {
-// 		fmt.Printf("Repositories.ListReleases with owner %s and repo %s returned error: %v", 
-// 				   "getoutreach", "clerkgen", err)
-// 		return "", err
-// 	}
-
-// 	// sort descendingly in terms of PublishedAt
-// 	sort.Slice(releases, func(i, j int) bool {
-// 		return (*releases[i].PublishedAt).Time.After((*releases[j].PublishedAt).Time)
-// 	})
-
-// 	// clerkgen_1.27.4_linux_amd64.tar.gz
-// 	assetName := "clerkgen_" + (*releases[0].TagName)[1:] + "_linux_arm64.tar.gz"
-// 	assets, _, err2 := client.Repositories.ListReleaseAssets(ctx, "getoutreach", "clerkgen", *releases[0].ID, nil)
-// 	if err2 != nil {
-// 		fmt.Printf("Repositories.ListReleaseAssets with owner %s and repo %s returned error: %v", 
-// 				   "getoutreach", "clerkgen", err2)
-// 		return "", err2
-// 	}
-
-// 	var assetId int64
-
-// 	for _, item := range assets {
-// 		if *item.Name == assetName {
-
-// 			assetId = *item.ID
-// 			break
-// 		} 
-// 	}
-
-// 	reader, _, err3 := client.Repositories.DownloadReleaseAsset(ctx, "getoutreach", "clerkgen",
-// 																assetId, http.DefaultClient)
-// 	if err3 != nil {
-// 		fmt.Printf("Repositories.DownloadReleaseAsset with owner %s and repo %s returned error: %v", 
-// 				   "getoutreach", "clerkgen", err3)
-// 		return "", err3
-// 	}
-// 	data, err3 := ioutil.ReadAll(reader)
-// 	if err3 != nil {
-// 		fmt.Printf("Repositories.DownloadReleaseAsset with owner %s and repo %s returned bad reader: %v", 
-// 				   "getoutreach", "clerkgen", err3)
-// 		return "", err3
-// 	}
-// 	ioutil.WriteFile(assetName, data, 0755)
-// 	reader.Close()
-// 	return (*releases[0].TagName)[1:], nil
-// }
-
-func downloadReleaseAssetViaGobox(ctx context.Context, tagName string) error {
+// download the clerkgen cli with the given tag
+func downloadReleaseAssetViaGobox(ctx context.Context) error {
 	opts := &release.FetchOptions{
 		RepoURL:   "https://github.com/getoutreach/clerkgen",
 		Tag:       tagName,
