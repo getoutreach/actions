@@ -139,9 +139,9 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 		if len(schemaNames) > 0 {
 			// download the clerkgen cli with the given tag
-			err = downloadReleaseAssetViaGobox(ctx)
+			err = downloadReleaseAsset(ctx)
 			if err != nil {
-				fmt.Printf("downloadReleaseAssetViaGobox returned error: %v", err)
+				fmt.Printf("downloadReleaseAsset returned error: %v", err)
 				return err
 			}
 
@@ -515,7 +515,7 @@ func createPR(pullRequestArg *PullRequestArg, client *github.Client, ctx context
 }
 
 // download the clerkgen cli with the given tag
-func downloadReleaseAssetViaGobox(ctx context.Context) error {
+func downloadReleaseAsset(ctx context.Context) error {
 	opts := &release.FetchOptions{
 		RepoURL:   "https://github.com/getoutreach/clerkgen",
 		Tag:       tagName,
