@@ -525,8 +525,7 @@ func getSourceFiles(dir string) ([]string, error) {
 		if (!info.IsDir()) {
 			files = append(files, path)
 		}
-			
-		fmt.Printf("dir: %v: name: %s\n", info.IsDir(), path)
+
 		return nil
 	})
 	
