@@ -31,6 +31,10 @@ on:
         type: string
         default: main
         required: false
+      ignored_checks: # This should be a comma separated list of check names to ignore, verbatim.
+        type: string
+        default: ""
+        required: false
       slack_channel:
         type: string
         required: true
@@ -51,6 +55,7 @@ jobs:
         PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         GITHUB_BRANCH: ${{ inputs.branch }}
+        IGNORED_CHECKS: ${{ inputs.ignored_checks }}
         SLACK_CHANNEL: ${{ inputs.slack_channel }}
         DM_COMMITTER: ${{ inputs.dm_committer }}
         GH_APP_ID: ${{ secrets.GH_APP_ID }}

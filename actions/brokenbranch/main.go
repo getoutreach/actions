@@ -78,9 +78,15 @@ func main() {
 
 // RunAction is where the actual implementation of the GitHub action goes and is called
 // by func main.
-func RunAction(ctx context.Context, _ *github.Client, actionCtx *actions.GitHubContext) error {
+func RunAction(ctx context.Context, _ *github.Client, actionCtx *actions.GitHubContext) error { //nolint:funlen,lll // Why: Doesn't make sense to break this up.
 	if actionCtx.EventName != "status" {
 		return errors.New("brokenbranch running on non \"status\" event")
+	}
+
+	ignoredChecksRaw := strings.TrimSpace(os.Getenv("IGNORED_CHECKS"))
+	ignoredChecks := strings.Split(ignoredChecksRaw, ",")
+	for i := range ignoredChecks {
+		ignoredChecks[i] = strings.TrimSpace(ignoredChecks[i])
 	}
 
 	githubBranch := strings.TrimSpace(os.Getenv("GITHUB_BRANCH"))
@@ -111,6 +117,13 @@ func RunAction(ctx context.Context, _ *github.Client, actionCtx *actions.GitHubC
 	if status.State != "failure" {
 		actions.Infof("status state not failure, skipping")
 		return nil
+	}
+
+	for i := range ignoredChecks {
+		if strings.EqualFold(status.Context, ignoredChecks[i]) {
+			actions.Infof("failed check (%s) is in ignored_checks input, skipping", status.Context)
+			return nil
+		}
 	}
 
 	var foundBranch bool
