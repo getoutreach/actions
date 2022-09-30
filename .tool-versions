@@ -1,14 +1,11 @@
-# THIS FILE IS DEVIATED because github.com/sethvargo/go-githubactions
-# requires Go 1.18.
-
 # This file contains tool versions for use with asdf
-golang 1.18.1
+golang 1.19
 nodejs 16.13.0
 terraform 0.13.5
 ruby 2.7.5
-protoc 3.19.1
+protoc 21.5
 # Note: Versions in this block override the above. Be EXTREMELY
 # CAREFUL with this. If you override a standard version you are
 # reducing compatibility guarantees.
-###Block(toolver)
-###EndBlock(toolver)
+## <<Stencil::Block(toolver)>>
+## <</Stencil::Block>>

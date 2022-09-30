@@ -1,16 +1,102 @@
 name: actions
+arguments:
+  admingw:
+    grpcPolicies: []
+    httpPolicies: []
+  authn:
+    aliases: []
+    audiences: []
+    canImpersonateUser: false
+    permittedUserScopes: ""
+    serviceActor:
+      actorTypes: []
+      audiences: []
+      governanceActors: []
+  circleAPIKey: ""
+  commands: []
+  commitGuard: false
+  coverage:
+    provider: codecov
+  datadogDashboards:
+    custom: []
+    mainLink: ""
+  dependencies:
+    optional: []
+    required: []
+  deployment:
+    acceptanceTestChannels: []
+    additionalBentoNames: []
+    environments: []
+    serviceDomains:
+      - bento
+    slack: ""
+  description: ""
+  go-protoc-imports: []
+  grpcClients: []
+  kubernetes:
+    groups: []
+  lifecycle: public_ga
+  lintroller: bronze
+  metrics: datadog
+  opslevel:
+    confluenceSpaceKey: ""
+    datadogDashboards:
+      mainLink: ""
+    designDocumentLink: ""
+  oss: false
+  pagerDutyLink: ""
+  releaseOptions:
+    allowMajorVersions: false
+    enablePrereleases: false
+    prereleasesBranch: ""
+  reportingTeam: fnd-dt
+  resources: {}
+  service: false
+  serviceActivities: []
+  slack: ""
+  terraform:
+    datadog:
+      grpc:
+        evaluationWindow: ""
+        latency:
+          percentiles:
+            highTraffic: 0
+            lowTraffic: 0
+          thresholds:
+            highTraffic: 0
+            lowTraffic: 0
+        lowTrafficCountThreshold: 0
+        qos:
+          thresholds:
+            highTraffic: 0
+            lowTraffic: 0
+        tags: []
+      http:
+        evaluationWindow: ""
+        percentiles:
+          highTraffic: 0
+          lowTraffic: 0
+        thresholds:
+          highTraffic: 0
+          lowCount: 0
+          lowTraffic: 0
+      pods:
+        thresholds:
+          availableLowCount: 0
+  tier: 0
+  tracing: opentelemetry
+  tutorial: false
+  validation: false
+  vaultSecrets:
+    - deploy/honeycomb_new/%(environment)s/honeycomb
+    - deploy/launchdarkly/%(environment)s/launchdarkly
+    - deploy/mint/%(environment)s/validation/mint-validator-payload
+    - deploy/flagship-shared-secret/%(environment)s/authn-flagship-payload
 modules:
   - name: github.com/getoutreach/stencil-base
-  - name: github.com/getoutreach/stencil-outreach
-  - name: github.com/getoutreach/stencil-circleci
   - name: github.com/getoutreach/stencil-golang
-  - name: github.com/getoutreach/stencil-opslevel
-arguments:
-  reportingTeam: fnd-dt
-  description: Defines GitHub action workflows and runners as docker images for those workflows.
-  service: false
-  lintroller: platinum
-  oss: false
-  releaseOptions:
-    allowMajorVersions: null
-    enablePrereleases: false
+  - name: github.com/getoutreach/stencil-circleci
+    channel: main
+  - name: github.com/getoutreach/stencil-actions
+  - name: github.com/getoutreach/stencil-discovery
+migrated: true

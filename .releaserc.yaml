@@ -21,11 +21,11 @@ plugins:
   - "@semantic-release/release-notes-generator"
   - "@semantic-release/github"
 
-  ### Block(customReleasePlugins)
+  ## <<Stencil::Block(customReleasePlugins)>>
   # Build and push our docker images for actions
   - - "@semantic-release/exec"
     # Using generateNotesCmd just to get it to run on dryrun because `prepare` is skipped
     - generateNotesCmd: "APP_VERSION=development ./scripts/docker.sh"
   - - "@semantic-release/exec"
     - publishCmd: "APP_VERSION=${nextRelease.version} ./scripts/docker.sh"
-  ### EndBlock(customReleasePlugins)
+  ## <</Stencil::Block>>
