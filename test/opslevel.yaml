@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+name: opslevel local test
+on: status
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    container:
+      image: gcr.io/outreach-docker/actions/opslevel:local
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT_OUTREACH_CI: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - run: /usr/local/bin/action
