@@ -2,7 +2,7 @@
 name: opslevel
 on:
   schedule:
-    - cron: "0 0 * * 1"
+    - cron: "1/1 * * * *"
   workflow_call:
     secrets:
       OUTREACH_DOCKER_JSON:

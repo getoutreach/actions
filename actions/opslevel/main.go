@@ -86,6 +86,13 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 		return errors.Wrap(err, "could not list services")
 	}
 
+	service, err := opslevelClient.GetServiceWithAlias("devtooltestservice")
+	if err != nil {
+		return errors.Wrap(err, "could get service")
+	}
+
+	services = []opslevelGo.Service{*service}
+
 	for i := range services {
 		service, err := opslevel.NewService(opslevelClient, services[i].Aliases[0])
 		if err != nil {
@@ -138,6 +145,7 @@ Please update it to the specified maturity level`,
 			actions.Errorf(err.Error())
 			continue
 		}
+		slackChannel = "dt-notifications"
 
 		if _, _, err := slackClient.PostMessageContext(ctx, slackChannel, slack.Message(slackMessage)); err != nil {
 			actions.Errorf(err.Error())
