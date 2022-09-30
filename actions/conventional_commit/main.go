@@ -32,6 +32,14 @@ var allowedCommitTypes = map[string]struct{}{
 	"revert":   {},
 }
 
+// bypassAuthorEmails are the authors that are allowed to bypass the conventional commit
+// check.
+//
+// Note: Commits must have a valid GPG signature to bypass the check.
+var bypassAuthorEmails = map[string]struct{}{
+	"49699333+dependabot[bot]@users.noreply.github.com": {},
+}
+
 // Variable block for regular expression parsing.
 var (
 	// reConventionalCommit is a regular expression that matches a valid conventional
@@ -105,6 +113,21 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 		commit, _, err := client.Repositories.GetCommit(ctx, pr.Base.Repo.Owner.Login, pr.Base.Repo.Name, pr.Head.SHA, &github.ListOptions{})
 		if err != nil {
 			return errors.Wrap(err, "get first commit details from github api")
+		}
+
+		// check if the commit is by an author that is allowed to bypass the check.
+		authorEmail := commit.GetCommit().GetAuthor().GetEmail()
+		if _, ok := bypassAuthorEmails[authorEmail]; ok {
+			actions.Infof("author %q is allowed to bypass conventional commit check", authorEmail)
+
+			// to ensure that someone doesn't try to bypass this check by spoofing the email
+			// address, we check that the commit has a valid GPG signature (according to Github).
+			if !commit.GetCommit().GetVerification().GetVerified() {
+				actions.Errorf("commit %q is not signed, not bypassing check", commit.GetSHA())
+			} else {
+				// the commit is signed, so we can bypass the check.
+				return nil
+			}
 		}
 
 		message := commit.GetCommit().GetMessage()
