@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/opslevel/opslevel-go/v2022"
+	opslevel "github.com/opslevel/opslevel-go/v2022"
 	"github.com/pkg/errors"
 	"github.com/shurcooL/graphql"
 )
@@ -44,7 +44,7 @@ var LifecycleToLevel = map[int]int{
 
 // IsCompliant checks if the service falls within the expected maturity level.
 // This check is primarily controlled by the LifecycleToLevel map
-func IsCompliant(service opslevel.Service, sm *opslevel.ServiceMaturity) (bool, error) {
+func IsCompliant(service *opslevel.Service, sm *opslevel.ServiceMaturity) (bool, error) {
 	currentLevelIndex := sm.MaturityReport.OverallLevel.Index
 	if len(LifecycleToLevel) <= service.Lifecycle.Index {
 		return false, fmt.Errorf("unsupported lifecycle %d %s",
@@ -56,7 +56,7 @@ func IsCompliant(service opslevel.Service, sm *opslevel.ServiceMaturity) (bool, 
 }
 
 // GetExpectedLevel retrieves the expected maturity level of the service
-func GetExpectedLevel(service opslevel.Service, levels []opslevel.Level) (string, error) {
+func GetExpectedLevel(service *opslevel.Service, levels []opslevel.Level) (string, error) {
 	if len(LifecycleToLevel) <= service.Lifecycle.Index {
 		return "", fmt.Errorf("unsupported lifecycle %d %s",
 			service.Lifecycle.Index, service.Lifecycle.Name)
@@ -88,16 +88,16 @@ func GetSlackChannel(team *opslevel.Team) (string, error) {
 	return "", fmt.Errorf("No slach channel found for team")
 }
 
-// GetMaturityReportHtmlURL retrieves the html url for the maturity report
-func GetMaturityReportHtmlURL(service opslevel.Service) string {
+// GetMaturityReportURL retrieves the html url for the maturity report
+func GetMaturityReportURL(service *opslevel.Service) string {
 	return service.HtmlURL + "/maturity-report"
 }
 
 // GetRepositoryID retrieves the first repository id for the given service.
-func GetRepositoryID(service opslevel.Service) (graphql.ID, error) {
+func GetRepositoryID(service *opslevel.Service) (graphql.ID, error) {
 	repos := service.Repositories.Edges
 
-	if len(repos) <= 0 {
+	if len(repos) == 0 {
 		return "", fmt.Errorf("no repositories linked to service")
 	}
 

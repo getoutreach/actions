@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/getoutreach/actions/internal/gh"
-	"github.com/getoutreach/actions/pkg/opslevel"
 	"github.com/getoutreach/actions/internal/slack"
+	"github.com/getoutreach/actions/pkg/opslevel"
 	"github.com/google/go-github/v43/github"
 	opslevelGo "github.com/opslevel/opslevel-go/v2022"
 	"github.com/pkg/errors"
@@ -99,7 +99,7 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 	services = []opslevelGo.Service{*service}
 
 	for i := range services {
-		service := services[i]
+		service := &services[i]
 
 		sm, err := opslevelClient.GetServiceMaturityWithAlias(service.Aliases[0])
 		if err != nil {
@@ -107,7 +107,7 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 			continue
 		}
 
-		isCompliant, err := opslevel.IsCompliant(service, sm) 
+		isCompliant, err := opslevel.IsCompliant(service, sm)
 		if err != nil {
 			actions.Errorf("is complient for %s: %v", service.Name, err.Error())
 			continue
@@ -118,6 +118,11 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 		}
 
 		repoID, err := opslevel.GetRepositoryID(service)
+		if err != nil {
+			actions.Errorf("get repository id for %s: %v", service.Name, err.Error())
+			continue
+		}
+
 		repo, err := opslevelClient.GetRepository(repoID)
 		if err != nil {
 			actions.Errorf("get repository for %s: %v", service.Name, err.Error())
@@ -133,9 +138,9 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 		slackMessage := fmt.Sprintf(
 			slackMessageFmt,
 			slack.Hyperlink(service.Name, repo.Url),
-		        expectedLevel,
-	         	opslevel.GetLevel(sm),
-			opslevel.GetMaturityReportHtmlURL(service),
+			expectedLevel,
+			opslevel.GetLevel(sm),
+			opslevel.GetMaturityReportURL(service),
 			`Starting next quarter, this repository will no longer be able to deploy.
 Please update it to the specified maturity level`,
 		)

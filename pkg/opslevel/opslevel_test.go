@@ -10,10 +10,10 @@ import (
 
 func TestIsComplient(t *testing.T) {
 	testCases := []struct {
-		name string
-		service opslevelGo.Service
-		sm *opslevelGo.ServiceMaturity
-		expected bool
+		name      string
+		service   opslevelGo.Service
+		sm        *opslevelGo.ServiceMaturity
+		expected  bool
 		expectErr bool
 	}{
 		{
@@ -23,14 +23,14 @@ func TestIsComplient(t *testing.T) {
 					Index: 3,
 				},
 			},
-			sm: &opslevelGo.ServiceMaturity {
+			sm: &opslevelGo.ServiceMaturity{
 				MaturityReport: opslevelGo.MaturityReport{
 					OverallLevel: opslevelGo.Level{
 						Index: 2,
 					},
 				},
 			},
-			expected: true,
+			expected:  true,
 			expectErr: false,
 		},
 		{
@@ -40,14 +40,14 @@ func TestIsComplient(t *testing.T) {
 					Index: 3,
 				},
 			},
-			sm: &opslevelGo.ServiceMaturity {
+			sm: &opslevelGo.ServiceMaturity{
 				MaturityReport: opslevelGo.MaturityReport{
 					OverallLevel: opslevelGo.Level{
 						Index: 1,
 					},
 				},
-				},
-			expected: false,
+			},
+			expected:  false,
 			expectErr: false,
 		},
 		{
@@ -57,14 +57,14 @@ func TestIsComplient(t *testing.T) {
 					Index: 3,
 				},
 			},
-			sm: &opslevelGo.ServiceMaturity {
+			sm: &opslevelGo.ServiceMaturity{
 				MaturityReport: opslevelGo.MaturityReport{
 					OverallLevel: opslevelGo.Level{
 						Index: 3,
 					},
 				},
-				},
-			expected: true,
+			},
+			expected:  true,
 			expectErr: false,
 		},
 		{
@@ -74,21 +74,21 @@ func TestIsComplient(t *testing.T) {
 					Index: 10,
 				},
 			},
-			sm: &opslevelGo.ServiceMaturity {
+			sm: &opslevelGo.ServiceMaturity{
 				MaturityReport: opslevelGo.MaturityReport{
 					OverallLevel: opslevelGo.Level{
 						Index: 3,
 					},
 				},
-				},
-			expected: false,
+			},
+			expected:  false,
 			expectErr: true,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			result, err := opslevel.IsCompliant(tc.service, tc.sm)
+			result, err := opslevel.IsCompliant(&tc.service, tc.sm)
 			if err != nil {
 				if tc.expectErr {
 					return
@@ -106,25 +106,25 @@ func TestIsComplient(t *testing.T) {
 	}
 }
 
-func TestGetExpectedLevel (t *testing.T) {
+func TestGetExpectedLevel(t *testing.T) {
 	levels := []opslevelGo.Level{
 		{
 			Index: 0,
-			Name: "Beginner",
+			Name:  "Beginner",
 		},
 		{
 			Index: 2,
-			Name: "Silver",
+			Name:  "Silver",
 		},
 		{
 			Index: 1,
-			Name: "Bronze",
+			Name:  "Bronze",
 		},
 	}
 	testCases := []struct {
-		name string
-		service opslevelGo.Service
-		expected string
+		name      string
+		service   opslevelGo.Service
+		expected  string
 		expectErr bool
 	}{
 		{
@@ -134,7 +134,7 @@ func TestGetExpectedLevel (t *testing.T) {
 					Index: 0,
 				},
 			},
-			expected: "Beginner",
+			expected:  "Beginner",
 			expectErr: false,
 		},
 		{
@@ -144,7 +144,7 @@ func TestGetExpectedLevel (t *testing.T) {
 					Index: 1,
 				},
 			},
-			expected: "Silver",
+			expected:  "Silver",
 			expectErr: false,
 		},
 		{
@@ -154,14 +154,14 @@ func TestGetExpectedLevel (t *testing.T) {
 					Index: 10,
 				},
 			},
-			expected: "",
+			expected:  "",
 			expectErr: true,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			result, err := opslevel.GetExpectedLevel(tc.service, levels)
+			result, err := opslevel.GetExpectedLevel(&tc.service, levels)
 			if err != nil {
 				if tc.expectErr {
 					return
@@ -179,7 +179,7 @@ func TestGetExpectedLevel (t *testing.T) {
 	}
 }
 
-func TestGetLevel (t *testing.T) {
+func TestGetLevel(t *testing.T) {
 	expected := "Silver"
 
 	sm := &opslevelGo.ServiceMaturity{
@@ -194,14 +194,13 @@ func TestGetLevel (t *testing.T) {
 	if result != expected {
 		t.Fatalf("expected: %s, got: %s", expected, result)
 	}
-
 }
 
-func TestGetSlackChannel (t *testing.T) {
+func TestGetSlackChannel(t *testing.T) {
 	testCases := []struct {
-		name string
-		team opslevelGo.Team
-		expected string
+		name      string
+		team      opslevelGo.Team
+		expected  string
 		expectErr bool
 	}{
 		{
@@ -209,12 +208,12 @@ func TestGetSlackChannel (t *testing.T) {
 			team: opslevelGo.Team{
 				Contacts: []opslevelGo.Contact{
 					{
-						Type: opslevelGo.ContactTypeSlack,
+						Type:        opslevelGo.ContactTypeSlack,
 						DisplayName: "#slack-channel",
 					},
 				},
 			},
-			expected: "#slack-channel",
+			expected:  "#slack-channel",
 			expectErr: false,
 		},
 		{
@@ -222,16 +221,16 @@ func TestGetSlackChannel (t *testing.T) {
 			team: opslevelGo.Team{
 				Contacts: []opslevelGo.Contact{
 					{
-						Type: opslevelGo.ContactTypeEmail,
+						Type:        opslevelGo.ContactTypeEmail,
 						DisplayName: "test@test.com",
 					},
 					{
-						Type: opslevelGo.ContactTypeSlack,
+						Type:        opslevelGo.ContactTypeSlack,
 						DisplayName: "#slack-channel",
 					},
 				},
 			},
-			expected: "#slack-channel",
+			expected:  "#slack-channel",
 			expectErr: false,
 		},
 		{
@@ -239,16 +238,16 @@ func TestGetSlackChannel (t *testing.T) {
 			team: opslevelGo.Team{
 				Contacts: []opslevelGo.Contact{
 					{
-						Type: opslevelGo.ContactTypeSlack,
+						Type:        opslevelGo.ContactTypeSlack,
 						DisplayName: "#slack-channel",
 					},
 					{
-						Type: opslevelGo.ContactTypeSlack,
+						Type:        opslevelGo.ContactTypeSlack,
 						DisplayName: "#bad-slack-channel",
 					},
 				},
 			},
-			expected: "#slack-channel",
+			expected:  "#slack-channel",
 			expectErr: false,
 		},
 		{
@@ -256,12 +255,12 @@ func TestGetSlackChannel (t *testing.T) {
 			team: opslevelGo.Team{
 				Contacts: []opslevelGo.Contact{
 					{
-						Type: opslevelGo.ContactTypeEmail,
+						Type:        opslevelGo.ContactTypeEmail,
 						DisplayName: "test@test.com",
 					},
 				},
 			},
-			expected: "",
+			expected:  "",
 			expectErr: true,
 		},
 	}
@@ -286,27 +285,24 @@ func TestGetSlackChannel (t *testing.T) {
 	}
 }
 
-func TestGetMaturityReportHtmlURL (t *testing.T) {
+func TestGetMaturityReportURL(t *testing.T) {
 	expected := "https://app.opslevel.com/services/devtooltestservice/maturity-report"
-
-
 
 	service := opslevelGo.Service{
 		HtmlURL: "https://app.opslevel.com/services/devtooltestservice",
 	}
 
-	result := opslevel.GetMaturityReportHtmlURL(service)
+	result := opslevel.GetMaturityReportURL(&service)
 	if result != expected {
 		t.Fatalf("expected: %s, got: %s", expected, result)
 	}
-
 }
 
-func TestGetRepositoryID (t *testing.T) {
+func TestGetRepositoryID(t *testing.T) {
 	testCases := []struct {
-		name string
-		service opslevelGo.Service
-		expected graphql.ID
+		name      string
+		service   opslevelGo.Service
+		expected  graphql.ID
 		expectErr bool
 	}{
 		{
@@ -322,7 +318,7 @@ func TestGetRepositoryID (t *testing.T) {
 					},
 				},
 			},
-			expected: "1",
+			expected:  "1",
 			expectErr: false,
 		},
 		{
@@ -343,7 +339,7 @@ func TestGetRepositoryID (t *testing.T) {
 					},
 				},
 			},
-			expected: "1",
+			expected:  "1",
 			expectErr: false,
 		},
 		{
@@ -353,14 +349,14 @@ func TestGetRepositoryID (t *testing.T) {
 					Edges: []opslevelGo.ServiceRepositoryEdge{},
 				},
 			},
-			expected: "",
+			expected:  "",
 			expectErr: true,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			result, err := opslevel.GetRepositoryID(tc.service)
+			result, err := opslevel.GetRepositoryID(&tc.service)
 			if err != nil {
 				if tc.expectErr {
 					return
