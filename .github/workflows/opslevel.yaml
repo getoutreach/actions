@@ -24,7 +24,6 @@ jobs:
       image: gcr.io/outreach-docker/actions/opslevel:${{ inputs.image_tag }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         OPSLEVEL_TOKEN: ${{ secrets.OPSLEVEL_TOKEN }}
       credentials:
