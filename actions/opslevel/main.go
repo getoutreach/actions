@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/getoutreach/actions/internal/gh"
-	"github.com/getoutreach/actions/internal/opslevel"
+	"github.com/getoutreach/actions/pkg/opslevel"
 	"github.com/getoutreach/actions/internal/slack"
 	"github.com/google/go-github/v43/github"
 	opslevelGo "github.com/opslevel/opslevel-go/v2022"
@@ -86,6 +86,11 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 		return errors.Wrap(err, "could not list services")
 	}
 
+	levels, err := opslevelClient.ListLevels()
+	if err != nil {
+		return errors.Wrap(err, "could not list levels")
+	}
+
 	service, err := opslevelClient.GetServiceWithAlias("devtooltestservice")
 	if err != nil {
 		return errors.Wrap(err, "could get service")
@@ -94,61 +99,63 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 	services = []opslevelGo.Service{*service}
 
 	for i := range services {
-		service, err := opslevel.NewService(opslevelClient, services[i].Aliases[0])
+		service := services[i]
+
+		sm, err := opslevelClient.GetServiceMaturityWithAlias(service.Aliases[0])
 		if err != nil {
-			actions.Errorf(err.Error())
+			actions.Errorf("get maturity report for %s: %v", service.Name, err.Error())
 			continue
 		}
 
-		isCompliant, err := service.IsCompliant()
+		isCompliant, err := opslevel.IsCompliant(service, sm) 
 		if err != nil {
-			actions.Errorf(err.Error())
+			actions.Errorf("is complient for %s: %v", service.Name, err.Error())
 			continue
 		}
-		// if the repository is compliant we do not do anything
+
 		if isCompliant {
 			continue
 		}
 
-		repositoryHyperlink, err := service.GetRepositoryHyperlink()
+		repoID, err := opslevel.GetRepositoryID(service)
+		repo, err := opslevelClient.GetRepository(repoID)
 		if err != nil {
-			actions.Errorf(err.Error())
+			actions.Errorf("get repository for %s: %v", service.Name, err.Error())
 			continue
 		}
 
-		expectedLevel, err := service.GetExpectedLevel()
+		expectedLevel, err := opslevel.GetExpectedLevel(service, levels)
 		if err != nil {
-			actions.Errorf(err.Error())
+			actions.Errorf("get expected level for %s: %v", service.Name, err.Error())
 			continue
 		}
-
-		level, err := service.GetLevel()
-		if err != nil {
-			actions.Errorf(err.Error())
-			continue
-		}
-
-		maturityReportHyperlink := service.GetMaturityReportHyperlink()
 
 		slackMessage := fmt.Sprintf(
 			slackMessageFmt,
-			repositoryHyperlink,
-			expectedLevel,
-			level,
-			maturityReportHyperlink,
+			slack.Hyperlink(service.Name, repo.Url),
+		        expectedLevel,
+	         	opslevel.GetLevel(sm),
+			opslevel.GetMaturityReportHtmlURL(service),
 			`Starting next quarter, this repository will no longer be able to deploy.
 Please update it to the specified maturity level`,
 		)
 
-		slackChannel, err := service.GetSlackChannel()
+		team, err := opslevelClient.GetTeam(service.Owner.Id)
 		if err != nil {
-			actions.Errorf(err.Error())
+			actions.Errorf("get team for %s: %v", service.Name, err.Error())
 			continue
 		}
+
+		slackChannel, err := opslevel.GetSlackChannel(team)
+		if err != nil {
+			actions.Errorf("get slack channel for %s: %v", service.Name, err.Error())
+			continue
+		}
+
 		slackChannel = "dt-notifications"
 
 		if _, _, err := slackClient.PostMessageContext(ctx, slackChannel, slack.Message(slackMessage)); err != nil {
-			actions.Errorf(err.Error())
+			actions.Errorf("posting slack message for %s: %v", service.Name, err.Error())
 			continue
 		}
 	}
