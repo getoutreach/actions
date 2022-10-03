@@ -1,16 +1,23 @@
 name: actions
+arguments:
+  coverage:
+    provider: codecov
+  description: |
+    This is a collection of actions that are used by Outreach.
+  lifecycle: public_ga
+  lintroller: platinum
+  metrics: datadog
+  opslevel:
+    confluenceSpaceKey: "DT"
+  oss: true
+  reportingTeam: fnd-dt
+  tier: 2
+  tracing: opentelemetry
 modules:
   - name: github.com/getoutreach/stencil-base
-  - name: github.com/getoutreach/stencil-outreach
-  - name: github.com/getoutreach/stencil-circleci
   - name: github.com/getoutreach/stencil-golang
-  - name: github.com/getoutreach/stencil-opslevel
-arguments:
-  reportingTeam: fnd-dt
-  description: Defines GitHub action workflows and runners as docker images for those workflows.
-  service: false
-  lintroller: platinum
-  oss: false
-  releaseOptions:
-    allowMajorVersions: null
-    enablePrereleases: false
+  - name: github.com/getoutreach/stencil-circleci
+    channel: main
+  - name: github.com/getoutreach/stencil-actions
+  - name: github.com/getoutreach/stencil-discovery
+migrated: true

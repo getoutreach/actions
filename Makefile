@@ -1,10 +1,10 @@
 APP := actions
-OSS := false
+OSS := true
 _ := $(shell ./scripts/devbase.sh) 
 
 include .bootstrap/root/Makefile
 
-###Block(targets)
+## <<Stencil::Block(targets)>>
 .PHONY: new-action
 new-action:
 	./scripts/new-action.sh $(name)
@@ -12,4 +12,4 @@ new-action:
 .PHONY: test-action
 test-action:
 	./scripts/test-action.sh $(name) $(payload)
-###EndBlock(targets)
+## <</Stencil::Block>>

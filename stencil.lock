@@ -1,23 +1,20 @@
-version: v1.25.1
+version: v1.28.1-rc.1
 modules:
+    - name: github.com/getoutreach/stencil-actions
+      url: https://github.com/getoutreach/stencil-actions
+      version: v0.1.0
     - name: github.com/getoutreach/stencil-base
       url: https://github.com/getoutreach/stencil-base
-      version: v0.5.0
+      version: v0.6.0
     - name: github.com/getoutreach/stencil-circleci
       url: https://github.com/getoutreach/stencil-circleci
-      version: v1.2.1
+      version: main
     - name: github.com/getoutreach/stencil-discovery
       url: https://github.com/getoutreach/stencil-discovery
-      version: v1.2.0
+      version: v1.3.0
     - name: github.com/getoutreach/stencil-golang
       url: https://github.com/getoutreach/stencil-golang
-      version: v1.2.0
-    - name: github.com/getoutreach/stencil-opslevel
-      url: https://github.com/getoutreach/stencil-opslevel
-      version: v0.1.1
-    - name: github.com/getoutreach/stencil-outreach
-      url: https://github.com/getoutreach/stencil-outreach
-      version: v0.2.2
+      version: v1.3.0
 files:
     - name: .circleci/config.yml
       template: .circleci/config.yml.tpl
@@ -31,12 +28,21 @@ files:
     - name: .github/CODEOWNERS
       template: .github/CODEOWNERS.tpl
       module: github.com/getoutreach/stencil-base
+    - name: .github/dependabot.yml
+      template: .github/dependabot.yml.tpl
+      module: github.com/getoutreach/stencil-golang
     - name: .github/pull_request_template.md
       template: .github/pull_request_template.md.tpl
       module: github.com/getoutreach/stencil-base
+    - name: .github/workflows/pull_request-shared-actions.yaml
+      template: .github/workflows/pull_request-shared-actions.yaml.tpl
+      module: github.com/getoutreach/stencil-actions
     - name: .gitignore
       template: .gitignore.tpl
       module: github.com/getoutreach/stencil-base
+    - name: .prettierignore
+      template: .prettierignore.tpl
+      module: github.com/getoutreach/stencil-golang
     - name: .prettierrc.yaml
       template: .prettierrc.yaml.tpl
       module: github.com/getoutreach/stencil-golang
@@ -52,9 +58,6 @@ files:
     - name: .vscode/launch.json
       template: .vscode/launch.json.tpl
       module: github.com/getoutreach/stencil-golang
-    - name: .vscode/outreach.code-snippets
-      template: .vscode/outreach.code-snippets.tpl
-      module: github.com/getoutreach/stencil-outreach
     - name: .vscode/private.env
       template: .vscode/private.env.tpl
       module: github.com/getoutreach/stencil-golang
@@ -63,6 +66,9 @@ files:
       module: github.com/getoutreach/stencil-golang
     - name: CONTRIBUTING.md
       template: CONTRIBUTING.md.tpl
+      module: github.com/getoutreach/stencil-base
+    - name: LICENSE
+      template: LICENSE.tpl
       module: github.com/getoutreach/stencil-base
     - name: Makefile
       template: Makefile.tpl
@@ -73,9 +79,9 @@ files:
     - name: devenv.yaml
       template: devenv.yaml.tpl
       module: github.com/getoutreach/stencil-golang
-    - name: opslevel.yml
-      template: opslevel.yml.tpl
-      module: github.com/getoutreach/stencil-opslevel
+    - name: go.mod
+      template: go.mod.tpl
+      module: github.com/getoutreach/stencil-golang
     - name: package.json
       template: package.json.tpl
       module: github.com/getoutreach/stencil-base

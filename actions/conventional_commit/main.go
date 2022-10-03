@@ -32,6 +32,16 @@ var allowedCommitTypes = map[string]struct{}{
 	"revert":   {},
 }
 
+// bypassAuthorEmails are the authors that are allowed to bypass the conventional commit
+// check. This is read from the environment variable "BYPASS_AUTHOR_EMAILS", as well as
+// the defaults list below.
+//
+// Note: Commits must have a valid GPG signature to bypass the check.
+var bypassAuthorEmails = map[string]struct{}{
+	// Static email for dependabot app.
+	"49699333+dependabot[bot]@users.noreply.github.com": {},
+}
+
 // Variable block for regular expression parsing.
 var (
 	// reConventionalCommit is a regular expression that matches a valid conventional
@@ -85,6 +95,37 @@ func main() {
 	exitCode = 0
 }
 
+// allowBypass checks if the commit author is allowed to bypass the conventional commit
+// check.
+func allowBypass(commit *github.RepositoryCommit) bool {
+	// Read emails from BYPASS_AUTHOR_EMAILS env var in bypassAuthorEmails.
+	//
+	// Note: This is here so the unit tests can set this.
+	if bypassEmails := os.Getenv("BYPASS_AUTHOR_EMAILS"); bypassEmails != "" {
+		for _, email := range strings.Split(os.Getenv("BYPASS_AUTHOR_EMAILS"), " ") {
+			bypassAuthorEmails[email] = struct{}{}
+		}
+	}
+
+	// check if the commit is by an author that is allowed to bypass the check.
+	authorEmail := commit.GetCommit().GetAuthor().GetEmail()
+	if _, ok := bypassAuthorEmails[authorEmail]; ok {
+		actions.Infof("author %q is allowed to bypass conventional commit check", authorEmail)
+
+		// to ensure that someone doesn't try to bypass this check by spoofing the email
+		// address, we check that the commit has a valid GPG signature (according to Github).
+		if !commit.GetCommit().GetVerification().GetVerified() {
+			actions.Errorf("commit %q is not signed, not bypassing check", commit.GetSHA())
+		} else {
+			// the commit is signed and from an approved email, so we can bypass the check.
+			return true
+		}
+	}
+
+	// always default to not allowing bypass.
+	return false
+}
+
 // RunAction is where the actual implementation of the GitHub action goes and is called
 // by func main.
 func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.GitHubContext) error {
@@ -107,6 +148,11 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 			return errors.Wrap(err, "get first commit details from github api")
 		}
 
+		// check if the commit author is allowed to bypass the conventional commit check.
+		if allowBypass(commit) {
+			return nil
+		}
+
 		message := commit.GetCommit().GetMessage()
 		parsedMessage := strings.Split(strings.ReplaceAll(message, "\r\n", "\n"), "\n")
 		commitTitle := parsedMessage[0]
@@ -123,17 +169,17 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 		return errors.New("pr title does not match conventional commit syntax")
 	}
 
-	_type := matches[reConventionalCommitType]
+	cType := matches[reConventionalCommitType]
 	scope := matches[reConventionalCommitScope]
 	breaking := matches[reConventionalCommitBreaking]
 	message := matches[reConventionalCommitMessage]
 
-	if _, exists := allowedCommitTypes[_type]; !exists {
-		return fmt.Errorf("commit type %q is not in the list of allowed commit types", _type)
+	if _, exists := allowedCommitTypes[cType]; !exists {
+		return fmt.Errorf("commit type %q is not in the list of allowed commit types", cType)
 	}
 
 	actions.Infof("successfully parsed conventional commit:\ntype: [%s]\nscope: [%s]\nbreaking: [%t]\nmessage: [%s]",
-		_type, strings.TrimSuffix(strings.TrimPrefix(scope, "("), ")"), breaking == "!", message)
+		cType, strings.TrimSuffix(strings.TrimPrefix(scope, "("), ")"), breaking == "!", message)
 
 	return nil
 }

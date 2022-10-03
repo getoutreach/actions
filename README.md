@@ -1,10 +1,13 @@
 # actions
-
-[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://engdocs.outreach.cloud/github.com/getoutreach/actions)
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/getoutreach/actions)
 [![Generated via Bootstrap](https://img.shields.io/badge/Outreach-Bootstrap-%235951ff)](https://github.com/getoutreach/bootstrap)
 [![Coverage Status](https://coveralls.io/repos/github/getoutreach/actions/badge.svg?branch=main)](https://coveralls.io/github//getoutreach/actions?branch=main)
+<!-- <<Stencil::Block(extraBadges)>> -->
 
-Defines GitHub action workflows and runners as docker images for those workflows.
+<!-- <</Stencil::Block>> -->
+
+This is a collection of actions that are used by Outreach.
+
 
 ## Contributing
 
@@ -12,7 +15,7 @@ Please read the [CONTRIBUTING.md](CONTRIBUTING.md) document for guidelines on de
 
 ## High-level Overview
 
-<!--- Block(overview) -->
+<!-- <<Stencil::Block(overview)>> -->
 
 This repository houses importable GitHub Actions that can be used in other repositories.
 These actions are written in Go and executed via a Dockerfile within the workflow itself.
@@ -88,4 +91,4 @@ requests you'll need to add a key-value pair to the
 `PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}`. As well as set the `orgWideAccess`
 flag in the parameters of `gh.NewClient` to true in the Go code that defines the action.
 
-<!--- EndBlock(overview) -->
+<!-- <</Stencil::Block>> -->
