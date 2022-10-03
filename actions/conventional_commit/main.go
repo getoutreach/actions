@@ -100,7 +100,7 @@ func main() {
 func allowBypass(commit *github.RepositoryCommit) bool {
 	// Read emails from BYPASS_AUTHOR_EMAILS env var in bypassAuthorEmails.
 	//
-	// Note: This is here so the unit tests can set this.
+	// Note: This parsing is here to make it easy to unit test.
 	if bypassEmails := os.Getenv("BYPASS_AUTHOR_EMAILS"); bypassEmails != "" {
 		for _, email := range strings.Split(os.Getenv("BYPASS_AUTHOR_EMAILS"), " ") {
 			bypassAuthorEmails[email] = struct{}{}

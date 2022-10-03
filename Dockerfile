@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.0-experimental
 
-FROM gcr.io/outreach-docker/golang:1.18.1 as builder
+FROM gcr.io/outreach-docker/golang:1.19 as builder
 
 ARG ACTION
 
@@ -13,15 +13,12 @@ WORKDIR /src
 # Copy our source code, go module information, and the files necessary
 # to run make comands into the builder directory.
 COPY actions/${ACTION}/ ./cmd/action/
-COPY go.mod .
-COPY go.sum .
-COPY Makefile .
-COPY bootstrap.lock .
+COPY go.mod go.sum Makefile bootstrap.lock ./
 COPY scripts/ ./scripts/
 COPY internal/ ./internal/
 
 # Cache dependencies across builds
-RUN --mount=type=ssh --mount=type=cache,target=/go/pkg make dep
+RUN --mount=type=ssh --mount=type=cache,target=/go/pkg go mod download
 
 # Build our application, caching the go build cache, but also using
 # the dependency cache from earlier.
@@ -29,10 +26,8 @@ RUN --mount=type=ssh --mount=type=cache,target=/go/pkg --mount=type=cache,target
     mkdir -p bin; \
     go build -v -o /src/bin/ ./cmd/...
 
-FROM gcr.io/outreach-docker/alpine:3.12
-
+FROM gcr.io/outreach-docker/alpine:3.16
 ENTRYPOINT ["/usr/local/bin/action"]
-
 LABEL "io.outreach.reporting_team"="fnd-dt"
 LABEL "io.outreach.repo"="actions"
 
