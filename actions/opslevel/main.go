@@ -152,7 +152,9 @@ Please update it to the specified maturity level`,
 			continue
 		}
 
-		slackChannel = "dt-notifications"
+		fmt.Printf("got channel: %s\n", slackChannel)
+
+		slackChannel = "dev-tooling-support-test"
 
 		if _, _, err := slackClient.PostMessageContext(ctx, slackChannel, slack.Message(slackMessage)); err != nil {
 			actions.Errorf("posting slack message for %s: %v", service.Name, err.Error())
