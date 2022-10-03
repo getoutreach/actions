@@ -72,12 +72,12 @@ func GetExpectedLevel(service opslevel.Service, levels []opslevel.Level) (string
 	return "", fmt.Errorf("unable to find level index %d", expectedLevelIndex)
 }
 
-// GetLevel retrieves the curren maturity report level of the service
+// GetLevel retrieves the current maturity report level of the service.
 func GetLevel(sm *opslevel.ServiceMaturity) string {
 	return sm.MaturityReport.OverallLevel.Name
 }
 
-// GetSlackChannel retrieves the slack channel to use for contacting the team resposinble for the service
+// GetSlackChannel retrieves the slack channel to use for contacting the team responsible for the service.
 func GetSlackChannel(team *opslevel.Team) (string, error) {
 	for _, c := range team.Contacts {
 		if c.Type == opslevel.ContactTypeSlack {
@@ -93,7 +93,7 @@ func GetMaturityReportHtmlURL(service opslevel.Service) string {
 	return service.HtmlURL + "/maturity-report"
 }
 
-// GetRepositoryID retrieves the first repository id
+// GetRepositoryID retrieves the first repository id for the given service.
 func GetRepositoryID(service opslevel.Service) (graphql.ID, error) {
 	repos := service.Repositories.Edges
 

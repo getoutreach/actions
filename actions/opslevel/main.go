@@ -29,7 +29,7 @@ const (
 	//	- Appended message content (anything, or empty)
 	//
 	// All of this information can be found in the status event payload sent to the action.
-	slackMessageFmt = `Looks like` + "`%s`" + ` does not meet the specied level in OpsLevel.
+	slackMessageFmt = `Your service ` + "`%s`" + ` does not meet the required level in OpsLevel.
 ---
 Expected Level: *%s*
 Actual Level: *%s*
@@ -53,7 +53,7 @@ func main() {
 
 	ghContext, err := actions.Context()
 	if err != nil {
-		actions.Errorf("unable to get action context: %v", err)
+		actions.Errorf("get action context: %v", err)
 		return
 	}
 
