@@ -10,7 +10,12 @@ on:
     inputs:
       image_tag:
         type: string
+        description: "Image to use for the action"
         default: latest
+        required: false
+      bypass_author_emails:
+        type: string
+        description: "Space separated list of emails to bypass the conventional commit check"
         required: false
 
 jobs:
@@ -21,6 +26,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
+        BYPASS_AUTHOR_EMAILS: ${{ inputs.bypass_author_emails }}
       credentials:
         username: _json_key
         password: ${{ secrets.OUTREACH_DOCKER_JSON }}
