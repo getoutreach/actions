@@ -45,18 +45,6 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*30)
 	defer cancel()
 
-	client, err := gh.NewClient(ctx, true)
-	if err != nil {
-		actions.Errorf("create github client: %v", err)
-		return
-	}
-
-	ghContext, err := actions.Context()
-	if err != nil {
-		actions.Errorf("get action context: %v", err)
-		return
-	}
-
 	slackClient, err := slack.NewClient()
 	if err != nil {
 		actions.Errorf("create slack client: %v", err)
@@ -70,7 +58,7 @@ func main() {
 	}
 
 	fmt.Printf("Trying to run")
-	if err := RunAction(ctx, client, ghContext, slackClient, opslevelClient); err != nil {
+	if err := RunAction(ctx, slackClient, opslevelClient); err != nil {
 		actions.Errorf(err.Error())
 		return
 	}
@@ -79,8 +67,7 @@ func main() {
 
 // RunAction is where the actual implementation of the GitHub action goes and is called
 // by func main.
-func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
-	slackClient *slackGo.Client, opslevelClient *opslevelGo.Client) error {
+func RunAction(ctx context.Context, slackClient *slackGo.Client, opslevelClient *opslevelGo.Client) error {
 	services, err := opslevelClient.ListServices()
 	if err != nil {
 		return errors.Wrap(err, "could not list services")
