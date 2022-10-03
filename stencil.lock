@@ -1,4 +1,4 @@
-version: v1.28.0
+version: v1.28.1-rc.1
 modules:
     - name: github.com/getoutreach/stencil-actions
       url: https://github.com/getoutreach/stencil-actions
@@ -66,6 +66,9 @@ files:
       module: github.com/getoutreach/stencil-golang
     - name: CONTRIBUTING.md
       template: CONTRIBUTING.md.tpl
+      module: github.com/getoutreach/stencil-base
+    - name: LICENSE
+      template: LICENSE.tpl
       module: github.com/getoutreach/stencil-base
     - name: Makefile
       template: Makefile.tpl
