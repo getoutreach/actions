@@ -38,6 +38,7 @@ var allowedCommitTypes = map[string]struct{}{
 //
 // Note: Commits must have a valid GPG signature to bypass the check.
 var bypassAuthorEmails = map[string]struct{}{
+	// Static email for dependabot app.
 	"49699333+dependabot[bot]@users.noreply.github.com": {},
 }
 
