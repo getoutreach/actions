@@ -81,11 +81,6 @@ func main() {
 // by func main.
 func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 	slackClient *slackGo.Client, opslevelClient *opslevelGo.Client) error {
-	services, err := opslevelClient.ListServices()
-	if err != nil {
-		return errors.Wrap(err, "could not list services")
-	}
-
 	levels, err := opslevelClient.ListLevels()
 	if err != nil {
 		return errors.Wrap(err, "could not list levels")
@@ -96,7 +91,7 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 		return errors.Wrap(err, "could get service")
 	}
 
-	services = []opslevelGo.Service{*service}
+	services := []opslevelGo.Service{*service}
 
 	for i := range services {
 		service := &services[i]
