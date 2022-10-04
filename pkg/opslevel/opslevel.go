@@ -29,17 +29,17 @@ func NewClient() (*opslevel.Client, error) {
 // We want to keep this at the index level in case names or other attributes change
 var LifecycleToLevel = map[int]int{
 	// In Development >= Beginner
-	0: 0,
+	1: 0,
 	// Private Beta >= Silver
-	1: 2,
-	// Public Beta >= Silver
 	2: 2,
-	// Public/GA >= Silver
+	// Public Beta >= Silver
 	3: 2,
-	// Ops >= Silver
+	// Public/GA >= Silver
 	4: 2,
+	// Ops >= Silver
+	5: 2,
 	// End-of-life >= Beginner
-	5: 0,
+	6: 0,
 }
 
 // IsCompliant checks if the service falls within the expected maturity level.
