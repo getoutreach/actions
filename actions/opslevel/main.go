@@ -69,7 +69,7 @@ func main() {
 		return
 	}
 
-	fmt.Printf("Trying to run")
+	fmt.Println("Trying to run")
 	if err := RunAction(ctx, client, ghContext, slackClient, opslevelClient); err != nil {
 		actions.Errorf(err.Error())
 		return
@@ -101,17 +101,26 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, 
 	for i := range services {
 		service := &services[i]
 
+		fmt.Printf("Running for service: %s\n", service.Name)
+
 		sm, err := opslevelClient.GetServiceMaturityWithAlias(service.Aliases[0])
 		if err != nil {
 			actions.Errorf("get maturity report for %s: %v", service.Name, err.Error())
 			continue
 		}
 
+		fmt.Println("got service maturity")
+
+		fmt.Printf("current maturity: %#v\n", sm.MaturityReport.OverallLevel)
+		fmt.Printf("life cycle: %#v\n", service.Lifecycle)
+
 		isCompliant, err := opslevel.IsCompliant(service, sm)
 		if err != nil {
 			actions.Errorf("is complient for %s: %v", service.Name, err.Error())
 			continue
 		}
+
+		fmt.Println("checking complience")
 
 		if isCompliant {
 			continue
@@ -128,6 +137,7 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, 
 			actions.Errorf("get slack channel for %s: %v", service.Name, err.Error())
 			continue
 		}
+		fmt.Printf("got channel: %s\n", slackChannel)
 		actions.Debugf("got channel: %s\n", slackChannel)
 
 		slackChannel = "#dt-slack-test"
