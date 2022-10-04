@@ -137,10 +137,14 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, 
 			actions.Errorf("get slack channel for %s: %v", service.Name, err.Error())
 			continue
 		}
+		// We need to drop the leading `#`.
+		// This is safe to do with index because it is known to always equal `#`.
+		slackChannel = slackChannel[1:]
+
 		fmt.Printf("got channel: %s\n", slackChannel)
 		actions.Debugf("got channel: %s\n", slackChannel)
 
-		slackChannel = "#dt-slack-test"
+		slackChannel = "dt-slack-test"
 
 		slackChannelID, err := slack.FindChannelID(channels, slackChannel)
 		if err != nil {
@@ -175,6 +179,11 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, 
 			`Starting next quarter, this repository will no longer be able to deploy.
 Please update it to the specified maturity level`,
 		)
+
+		if _, _, _, err := slackClient.JoinConversationContext(ctx, slackChannelID); err != nil {
+			actions.Errorf("joining slack channel for %s: %v", service.Name, err.Error())
+			continue
+		}
 
 		if _, _, err := slackClient.PostMessageContext(ctx, slackChannelID, slack.Message(slackMessage)); err != nil {
 			actions.Errorf("posting slack message for %s: %v", service.Name, err.Error())
