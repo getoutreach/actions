@@ -15,10 +15,6 @@ on:
         type: string
         default: latest
         required: false
-      branch:
-        type: string
-        default: main
-        required: false
 
 jobs:
   run:

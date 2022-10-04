@@ -43,7 +43,7 @@ func main() {
 		os.Exit(exitCode)
 	}()
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*30)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*60)
 	defer cancel()
 
 	client, err := gh.NewClient(ctx, false)
@@ -91,12 +91,10 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, 
 		return errors.Wrap(err, "could not get slack channels")
 	}
 
-	service, err := opslevelClient.GetServiceWithAlias("devtooltestservice")
+	services, err := opslevelClient.ListServices()
 	if err != nil {
-		return errors.Wrap(err, "could get service")
+		return errors.Wrap(err, "could not list services")
 	}
-
-	services := []opslevelGo.Service{*service}
 
 	for i := range services {
 		service := &services[i]
@@ -131,9 +129,6 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, 
 		// We need to drop the leading `#`.
 		// This is safe to do with index because it is known to always equal `#`.
 		slackChannel = slackChannel[1:]
-		fmt.Printf("got channel: %s\n", slackChannel)
-
-		slackChannel = "dt-slack-test"
 
 		slackChannelID, err := slack.FindChannelID(channels, slackChannel)
 		if err != nil {
