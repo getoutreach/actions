@@ -8,6 +8,70 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
+func TestGetServiceAlias(t *testing.T) {
+	testCases := []struct {
+		name      string
+		service   opslevelGo.Service
+		expected  string
+		expectErr bool
+	}{
+		{
+			name: "single alias",
+			service: opslevelGo.Service{
+				ServiceId: opslevelGo.ServiceId{
+					Aliases: []string{
+						"test",
+					},
+				},
+			},
+			expected:  "test",
+			expectErr: false,
+		},
+		{
+			name: "multiple aliases",
+			service: opslevelGo.Service{
+				ServiceId: opslevelGo.ServiceId{
+					Aliases: []string{
+						"test",
+						"test2",
+					},
+				},
+			},
+			expected:  "test",
+			expectErr: false,
+		},
+		{
+			name: "no aliases",
+			service: opslevelGo.Service{
+				ServiceId: opslevelGo.ServiceId{
+					Aliases: []string{},
+				},
+			},
+			expected:  "",
+			expectErr: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := opslevel.GetServiceAlias(&tc.service)
+			if err != nil {
+				if tc.expectErr {
+					return
+				}
+				t.Fatalf("unexpected error")
+			}
+			if tc.expectErr {
+				t.Fatalf("expected and error but did not receive one")
+			}
+
+			if result != tc.expected {
+				t.Fatalf("expected: %s, got: %s", tc.expected, result)
+			}
+		})
+	}
+}
+
 func TestIsComplient(t *testing.T) {
 	testCases := []struct {
 		name      string

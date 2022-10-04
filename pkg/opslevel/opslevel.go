@@ -42,6 +42,15 @@ var LifecycleToLevel = map[int]int{
 	6: 0,
 }
 
+// GetServiceAlias safely retrieves the first alias for the provided service.
+func GetServiceAlias(service *opslevel.Service) (string, error) {
+	if len(service.Aliases) == 0 {
+		return "", fmt.Errorf("no aliases present")
+	}
+
+	return service.Aliases[0], nil
+}
+
 // IsCompliant checks if the service falls within the expected maturity level.
 // This check is primarily controlled by the LifecycleToLevel map
 func IsCompliant(service *opslevel.Service, sm *opslevel.ServiceMaturity) (bool, error) {

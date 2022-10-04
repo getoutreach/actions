@@ -99,7 +99,13 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, 
 	for i := range services {
 		service := &services[i]
 
-		sm, err := opslevelClient.GetServiceMaturityWithAlias(service.Aliases[0])
+		alias, err := opslevel.GetServiceAlias(service)
+		if err != nil {
+			actions.Errorf("get service alias for %s: %v", service.Name, err.Error())
+			continue
+		}
+
+		sm, err := opslevelClient.GetServiceMaturityWithAlias(alias)
 		if err != nil {
 			actions.Errorf("get maturity report for %s: %v", service.Name, err.Error())
 			continue
