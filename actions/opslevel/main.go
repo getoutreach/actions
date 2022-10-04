@@ -4,8 +4,10 @@ package main
 
 import (
 	"context"
-	"fmt"
+	_ "embed"
 	"os"
+	"strings"
+	"text/template"
 	"time"
 
 	"github.com/getoutreach/actions/internal/gh"
@@ -18,24 +20,20 @@ import (
 	slackGo "github.com/slack-go/slack"
 )
 
-// Constant block for slack message formatted strings.
-const (
-	// slackMessageFmt is a formatted string that is meant to have the following data
-	// passed to it to build it:
-	//	- Project repository hyperlink
-	//      - Expected OpsLevel level
-	//      - Actual OpsLevel level
-	//	- Hyperlinked OpsLevel Maturity Report
-	//	- Appended message content (anything, or empty)
-	//
-	// All of this information can be found in the status event payload sent to the action.
-	slackMessageFmt = `Your service ` + "`%s`" + ` does not meet the required level in OpsLevel.
----
-Expected Level: *%s*
-Actual Level: *%s*
-OpsLevel Maturity Report: *%s*
-%s`
-)
+//go:embed message.tpl
+var slackMessage string
+
+// SlackMessageFields holds the fields needed to execute the slack message template.
+type SlackMessageFields struct {
+	// RepoHyperlink is a slack compliant hyperlink to the github repository.
+	RepoHyperlink string
+	// ExpectedLevel is the level that the service should be at.
+	ExpectedLevel string
+	// ActualLevel is the current level of the service.
+	ActualLevel string
+	// MaturityReportHyperlink is a slack compliant hyperlink to the OpsLevel maturity report.
+	MaturityReportHyperlink string
+}
 
 func main() {
 	exitCode := 1
@@ -81,6 +79,8 @@ func main() {
 // by func main.
 func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, //nolint:funlen // Why: runs the action
 	slackClient *slackGo.Client, opslevelClient *opslevelGo.Client) error {
+	t := template.Must(template.New("slackMessage").Parse(slackMessage))
+
 	levels, err := opslevelClient.ListLevels()
 	if err != nil {
 		return errors.Wrap(err, "could not list levels")
@@ -160,22 +160,27 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, 
 			continue
 		}
 
-		slackMessage := fmt.Sprintf(
-			slackMessageFmt,
-			slack.Hyperlink(service.Name, repo.Url),
-			expectedLevel,
-			opslevel.GetLevel(sm),
-			slack.Hyperlink("Maturity Report", opslevel.GetMaturityReportURL(service)),
-			`Starting next quarter, this repository will no longer be able to deploy.
-Please update it to the specified maturity level`,
-		)
+		var slackMessage strings.Builder
+		if err = t.Execute(
+			&slackMessage,
+			SlackMessageFields{
+				RepoHyperlink: slack.Hyperlink(service.Name, repo.Url),
+				ExpectedLevel: expectedLevel,
+				ActualLevel:   opslevel.GetLevel(sm),
+				MaturityReportHyperlink: slack.Hyperlink("Maturity Report",
+					opslevel.GetMaturityReportURL(service)),
+			},
+		); err != nil {
+			actions.Errorf("building slack message for %s: %v", service.Name, err.Error())
+			continue
+		}
 
 		if _, _, _, err := slackClient.JoinConversationContext(ctx, slackChannelID); err != nil {
 			actions.Errorf("joining slack channel for %s: %v", service.Name, err.Error())
 			continue
 		}
 
-		if _, _, err := slackClient.PostMessageContext(ctx, slackChannelID, slack.Message(slackMessage)); err != nil {
+		if _, _, err := slackClient.PostMessageContext(ctx, slackChannelID, slack.Message(slackMessage.String())); err != nil {
 			actions.Errorf("posting slack message for %s: %v", service.Name, err.Error())
 			continue
 		}
