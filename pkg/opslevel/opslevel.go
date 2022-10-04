@@ -81,7 +81,7 @@ func GetLevel(sm *opslevel.ServiceMaturity) string {
 func GetSlackChannel(team *opslevel.Team) (string, error) {
 	for _, c := range team.Contacts {
 		if c.Type == opslevel.ContactTypeSlack {
-			return c.DisplayName, nil
+			return c.Address, nil
 		}
 	}
 

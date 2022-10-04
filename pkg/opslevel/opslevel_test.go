@@ -208,8 +208,8 @@ func TestGetSlackChannel(t *testing.T) {
 			team: opslevelGo.Team{
 				Contacts: []opslevelGo.Contact{
 					{
-						Type:        opslevelGo.ContactTypeSlack,
-						DisplayName: "#slack-channel",
+						Type:    opslevelGo.ContactTypeSlack,
+						Address: "#slack-channel",
 					},
 				},
 			},
@@ -221,12 +221,12 @@ func TestGetSlackChannel(t *testing.T) {
 			team: opslevelGo.Team{
 				Contacts: []opslevelGo.Contact{
 					{
-						Type:        opslevelGo.ContactTypeEmail,
-						DisplayName: "test@test.com",
+						Type:    opslevelGo.ContactTypeEmail,
+						Address: "test@test.com",
 					},
 					{
-						Type:        opslevelGo.ContactTypeSlack,
-						DisplayName: "#slack-channel",
+						Type:    opslevelGo.ContactTypeSlack,
+						Address: "#slack-channel",
 					},
 				},
 			},
@@ -238,12 +238,12 @@ func TestGetSlackChannel(t *testing.T) {
 			team: opslevelGo.Team{
 				Contacts: []opslevelGo.Contact{
 					{
-						Type:        opslevelGo.ContactTypeSlack,
-						DisplayName: "#slack-channel",
+						Type:    opslevelGo.ContactTypeSlack,
+						Address: "#slack-channel",
 					},
 					{
-						Type:        opslevelGo.ContactTypeSlack,
-						DisplayName: "#bad-slack-channel",
+						Type:    opslevelGo.ContactTypeSlack,
+						Address: "#bad-slack-channel",
 					},
 				},
 			},

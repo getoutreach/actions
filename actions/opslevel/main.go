@@ -79,11 +79,16 @@ func main() {
 
 // RunAction is where the actual implementation of the GitHub action goes and is called
 // by func main.
-func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
+func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, //nolint:funlen // Why: runs the action
 	slackClient *slackGo.Client, opslevelClient *opslevelGo.Client) error {
 	levels, err := opslevelClient.ListLevels()
 	if err != nil {
 		return errors.Wrap(err, "could not list levels")
+	}
+
+	channels, err := slack.GetAllChannels(slackClient)
+	if err != nil {
+		return errors.Wrap(err, "could not get slack channels")
 	}
 
 	service, err := opslevelClient.GetServiceWithAlias("devtooltestservice")
@@ -109,6 +114,27 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 		}
 
 		if isCompliant {
+			continue
+		}
+
+		team, err := opslevelClient.GetTeam(service.Owner.Id)
+		if err != nil {
+			actions.Errorf("get team for %s: %v", service.Name, err.Error())
+			continue
+		}
+
+		slackChannel, err := opslevel.GetSlackChannel(team)
+		if err != nil {
+			actions.Errorf("get slack channel for %s: %v", service.Name, err.Error())
+			continue
+		}
+		actions.Debugf("got channel: %s\n", slackChannel)
+
+		slackChannel = "#dt-slack-test"
+
+		slackChannelID, err := slack.FindChannelID(channels, slackChannel)
+		if err != nil {
+			actions.Errorf("find channel id for %s: %v", service.Name, err.Error())
 			continue
 		}
 
@@ -140,23 +166,7 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 Please update it to the specified maturity level`,
 		)
 
-		team, err := opslevelClient.GetTeam(service.Owner.Id)
-		if err != nil {
-			actions.Errorf("get team for %s: %v", service.Name, err.Error())
-			continue
-		}
-
-		slackChannel, err := opslevel.GetSlackChannel(team)
-		if err != nil {
-			actions.Errorf("get slack channel for %s: %v", service.Name, err.Error())
-			continue
-		}
-
-		fmt.Printf("got channel: %s\n", slackChannel)
-
-		slackChannel = "dt-slack-test"
-
-		if _, _, err := slackClient.PostMessageContext(ctx, slackChannel, slack.Message(slackMessage)); err != nil {
+		if _, _, err := slackClient.PostMessageContext(ctx, slackChannelID, slack.Message(slackMessage)); err != nil {
 			actions.Errorf("posting slack message for %s: %v", service.Name, err.Error())
 			continue
 		}
