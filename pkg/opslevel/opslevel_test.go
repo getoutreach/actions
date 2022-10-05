@@ -277,7 +277,7 @@ func TestGetSlackChannel(t *testing.T) {
 					},
 				},
 			},
-			expected:  "#slack-channel",
+			expected:  "slack-channel",
 			expectErr: false,
 		},
 		{
@@ -294,7 +294,7 @@ func TestGetSlackChannel(t *testing.T) {
 					},
 				},
 			},
-			expected:  "#slack-channel",
+			expected:  "slack-channel",
 			expectErr: false,
 		},
 		{
@@ -311,7 +311,7 @@ func TestGetSlackChannel(t *testing.T) {
 					},
 				},
 			},
-			expected:  "#slack-channel",
+			expected:  "slack-channel",
 			expectErr: false,
 		},
 		{

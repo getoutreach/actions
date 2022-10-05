@@ -36,6 +36,11 @@ type SlackMessageFields struct {
 	MaturityReportHyperlink string
 }
 
+const slackMessageFooter string = `
+Starting next quarter, these repositories will no longer be able to deploy.
+Please update them to the specified maturity level.
+`
+
 func main() {
 	exitCode := 1
 	defer func() {
@@ -78,18 +83,13 @@ func main() {
 
 // RunAction is where the actual implementation of the GitHub action goes and is called
 // by func main.
-func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, //nolint:funlen // Why: runs the action
+func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 	slackClient *slackGo.Client, opslevelClient *opslevelGo.Client) error {
 	t := template.Must(template.New("slackMessage").Parse(slackMessage))
 
 	levels, err := opslevelClient.ListLevels()
 	if err != nil {
 		return errors.Wrap(err, "could not list levels")
-	}
-
-	channels, err := slack.GetAllChannels(slackClient)
-	if err != nil {
-		return errors.Wrap(err, "could not get slack channels")
 	}
 
 	team, err := opslevelClient.GetTeamWithAlias("fnd-dt")
@@ -100,82 +100,32 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, 
 	teams := []*opslevelGo.Team{team}
 
 	for _, team := range teams {
-		services, err := opslevelClient.ListServicesWithOwner(team.Alias)
+		slackMessage, err := buildSlackMessage(opslevelClient, team, levels, t)
 		if err != nil {
-			return errors.Wrap(err, "could not list services")
+			actions.Errorf("building slack message for %s: %v", team.Name, err.Error())
+			continue
 		}
 
-		var slackMessage strings.Builder
-		for i := range services {
-			service := &services[i]
-
-			alias, err := opslevel.GetServiceAlias(service)
-			if err != nil {
-				actions.Errorf("get service alias for %s: %v", service.Name, err.Error())
-				continue
-			}
-
-			sm, err := opslevelClient.GetServiceMaturityWithAlias(alias)
-			if err != nil {
-				actions.Errorf("get maturity report for %s: %v", service.Name, err.Error())
-				continue
-			}
-
-			isCompliant, err := opslevel.IsCompliant(service, sm)
-			if err != nil {
-				actions.Errorf("is complient for %s: %v", service.Name, err.Error())
-				continue
-			}
-
-			if isCompliant {
-				continue
-			}
-
-			repoID, err := opslevel.GetRepositoryID(service)
-			if err != nil {
-				actions.Errorf("get repository id for %s: %v", service.Name, err.Error())
-				continue
-			}
-
-			repo, err := opslevelClient.GetRepository(repoID)
-			if err != nil {
-				actions.Errorf("get repository for %s: %v", service.Name, err.Error())
-				continue
-			}
-
-			expectedLevel, err := opslevel.GetExpectedLevel(service, levels)
-			if err != nil {
-				actions.Errorf("get expected level for %s: %v", service.Name, err.Error())
-				continue
-			}
-
-			if err = t.Execute(
-				&slackMessage,
-				SlackMessageFields{
-					RepoHyperlink: slack.Hyperlink(service.Name, repo.Url),
-					ExpectedLevel: expectedLevel,
-					ActualLevel:   opslevel.GetLevel(sm),
-					MaturityReportHyperlink: slack.Hyperlink("Maturity Report",
-						opslevel.GetMaturityReportURL(service)),
-				},
-			); err != nil {
-				actions.Errorf("building slack message for %s: %v", service.Name, err.Error())
-				continue
-			}
+		// If all repos are compliant, we skip sending a slack message
+		if slackMessage == "" {
+			continue
 		}
+		slackMessage += slackMessageFooter
 
 		slackChannel, err := opslevel.GetSlackChannel(team)
 		if err != nil {
 			actions.Errorf("get slack channel for %s: %v", team.Name, err.Error())
 			continue
 		}
-		// We need to drop the leading `#`.
-		// This is safe to do with index because it is known to always equal `#`.
-		slackChannel = slackChannel[1:]
 
 		fmt.Printf("got channel: %s", slackChannel)
 
 		slackChannel = "dt-slack-test"
+
+		channels, err := slack.GetAllChannels(slackClient)
+		if err != nil {
+			return errors.Wrap(err, "could not get slack channels")
+		}
 
 		slackChannelID, err := slack.FindChannelID(channels, slackChannel)
 		if err != nil {
@@ -188,10 +138,79 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext, 
 			continue
 		}
 
-		if _, _, err := slackClient.PostMessageContext(ctx, slackChannelID, slack.Message(slackMessage.String())); err != nil {
+		if _, _, err := slackClient.PostMessageContext(ctx, slackChannelID, slack.Message(slackMessage)); err != nil {
 			actions.Errorf("posting slack message for %s: %v", team.Name, err.Error())
 			continue
 		}
 	}
 	return nil
+}
+
+func buildSlackMessage(client *opslevelGo.Client, team *opslevelGo.Team,
+	levels []opslevelGo.Level, t *template.Template) (string, error) {
+	services, err := client.ListServicesWithOwner(team.Alias)
+	if err != nil {
+		return "", errors.Wrap(err, "could not list services")
+	}
+
+	var slackMessage strings.Builder
+	for i := range services {
+		service := &services[i]
+
+		alias, err := opslevel.GetServiceAlias(service)
+		if err != nil {
+			actions.Errorf("get service alias for %s: %v", service.Name, err.Error())
+			continue
+		}
+
+		sm, err := client.GetServiceMaturityWithAlias(alias)
+		if err != nil {
+			actions.Errorf("get maturity report for %s: %v", service.Name, err.Error())
+			continue
+		}
+
+		isCompliant, err := opslevel.IsCompliant(service, sm)
+		if err != nil {
+			actions.Errorf("is complient for %s: %v", service.Name, err.Error())
+			continue
+		}
+
+		if isCompliant {
+			continue
+		}
+
+		repoID, err := opslevel.GetRepositoryID(service)
+		if err != nil {
+			actions.Errorf("get repository id for %s: %v", service.Name, err.Error())
+			continue
+		}
+
+		repo, err := client.GetRepository(repoID)
+		if err != nil {
+			actions.Errorf("get repository for %s: %v", service.Name, err.Error())
+			continue
+		}
+
+		expectedLevel, err := opslevel.GetExpectedLevel(service, levels)
+		if err != nil {
+			actions.Errorf("get expected level for %s: %v", service.Name, err.Error())
+			continue
+		}
+
+		if err := t.Execute(
+			&slackMessage,
+			SlackMessageFields{
+				RepoHyperlink: slack.Hyperlink(service.Name, repo.Url),
+				ExpectedLevel: expectedLevel,
+				ActualLevel:   opslevel.GetLevel(sm),
+				MaturityReportHyperlink: slack.Hyperlink("Maturity Report",
+					opslevel.GetMaturityReportURL(service)),
+			},
+		); err != nil {
+			actions.Errorf("building slack message for %s: %v", service.Name, err.Error())
+			continue
+		}
+	}
+
+	return slackMessage.String(), nil
 }

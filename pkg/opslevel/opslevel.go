@@ -90,7 +90,9 @@ func GetLevel(sm *opslevel.ServiceMaturity) string {
 func GetSlackChannel(team *opslevel.Team) (string, error) {
 	for _, c := range team.Contacts {
 		if c.Type == opslevel.ContactTypeSlack {
-			return c.Address, nil
+			// We need to drop the leading `#`.
+			// This is safe to do with index because it is known to always equal `#`.
+			return c.Address[1:], nil
 		}
 	}
 
