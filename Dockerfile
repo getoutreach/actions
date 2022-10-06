@@ -15,7 +15,6 @@ WORKDIR /src
 COPY actions/${ACTION}/ ./cmd/action/
 COPY go.mod go.sum Makefile bootstrap.lock ./
 COPY scripts/ ./scripts/
-COPY internal/ ./internal/
 COPY pkg/ ./pkg/
 
 # Cache dependencies across builds
