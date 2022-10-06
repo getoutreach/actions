@@ -1,1 +1,1 @@
-* {{ .MaturityReportHyperlink }}: *{{ .ActualLevel }}* (Current), *{{ .ExpectedLevel }}* (Expected)
+* {{ .MaturityReportHyperlink }}: *{{ .ActualLevel }}* (current), *{{ .ExpectedLevel }}* (expected)

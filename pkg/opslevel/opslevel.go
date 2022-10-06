@@ -12,7 +12,6 @@ import (
 
 	opslevel "github.com/opslevel/opslevel-go/v2022"
 	"github.com/pkg/errors"
-	"github.com/shurcooL/graphql"
 )
 
 // NewClient returns a new opslevel client configured with the token we expect to exist in
@@ -102,15 +101,4 @@ func GetSlackChannel(team *opslevel.Team) (string, error) {
 // GetMaturityReportURL retrieves the html url for the maturity report
 func GetMaturityReportURL(service *opslevel.Service) string {
 	return service.HtmlURL + "/maturity-report"
-}
-
-// GetRepositoryID retrieves the first repository id for the given service.
-func GetRepositoryID(service *opslevel.Service) (graphql.ID, error) {
-	repos := service.Repositories.Edges
-
-	if len(repos) == 0 {
-		return "", fmt.Errorf("no repositories linked to service")
-	}
-
-	return repos[0].Node.Id, nil
 }

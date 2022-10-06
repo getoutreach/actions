@@ -5,7 +5,6 @@ import (
 
 	"github.com/getoutreach/actions/pkg/opslevel"
 	opslevelGo "github.com/opslevel/opslevel-go/v2022"
-	"github.com/shurcooL/graphql"
 )
 
 func TestGetServiceAlias(t *testing.T) {
@@ -359,81 +358,5 @@ func TestGetMaturityReportURL(t *testing.T) {
 	result := opslevel.GetMaturityReportURL(&service)
 	if result != expected {
 		t.Fatalf("expected: %s, got: %s", expected, result)
-	}
-}
-
-func TestGetRepositoryID(t *testing.T) {
-	testCases := []struct {
-		name      string
-		service   opslevelGo.Service
-		expected  graphql.ID
-		expectErr bool
-	}{
-		{
-			name: "single repository",
-			service: opslevelGo.Service{
-				Repositories: opslevelGo.ServiceRepositoryConnection{
-					Edges: []opslevelGo.ServiceRepositoryEdge{
-						{
-							Node: opslevelGo.RepositoryId{
-								Id: "1",
-							},
-						},
-					},
-				},
-			},
-			expected:  "1",
-			expectErr: false,
-		},
-		{
-			name: "multiple repositories",
-			service: opslevelGo.Service{
-				Repositories: opslevelGo.ServiceRepositoryConnection{
-					Edges: []opslevelGo.ServiceRepositoryEdge{
-						{
-							Node: opslevelGo.RepositoryId{
-								Id: "1",
-							},
-						},
-						{
-							Node: opslevelGo.RepositoryId{
-								Id: "2",
-							},
-						},
-					},
-				},
-			},
-			expected:  "1",
-			expectErr: false,
-		},
-		{
-			name: "no repositories",
-			service: opslevelGo.Service{
-				Repositories: opslevelGo.ServiceRepositoryConnection{
-					Edges: []opslevelGo.ServiceRepositoryEdge{},
-				},
-			},
-			expected:  "",
-			expectErr: true,
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			result, err := opslevel.GetRepositoryID(&tc.service)
-			if err != nil {
-				if tc.expectErr {
-					return
-				}
-				t.Fatalf("unexpected error")
-			}
-			if tc.expectErr {
-				t.Fatalf("expected and error but did not receive one")
-			}
-
-			if result != tc.expected {
-				t.Fatalf("expected: %s, got: %s", tc.expected, result)
-			}
-		})
 	}
 }

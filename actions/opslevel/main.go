@@ -21,6 +21,8 @@ import (
 	slackGo "github.com/slack-go/slack"
 )
 
+// slackMessage is a template string of the slack message for each service.
+//
 //go:embed message.tpl
 var slackMessage string
 
@@ -34,6 +36,7 @@ type SlackMessageFields struct {
 	ExpectedLevel string
 }
 
+// slackMessageHeader is the header added to each slack message
 const slackMessageHeader string = "Starting next quarter, deployments for these repositories will be blocked if they are not updated to meet their expected service maturity level in OpsLevel.\n" //nolint:lll // Why: Slack message string.
 
 func main() {
@@ -84,24 +87,23 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 
 	levels, err := opslevelClient.ListLevels()
 	if err != nil {
-		return errors.Wrap(err, "could not list levels")
+		return fmt.Errorf("list levels: %w", err)
 	}
 
-	team, err := opslevelClient.GetTeamWithAlias("fnd-dt")
+	teams, err := opslevelClient.ListTeams()
 	if err != nil {
-		return errors.Wrap(err, "could not get team")
+		return fmt.Errorf("list teams: %w", err)
 	}
 
-	teams := []*opslevelGo.Team{team}
-
-	for _, team := range teams {
+	for i := range teams {
+		team := &teams[i]
 		slackMessage, err := buildSlackMessage(opslevelClient, team, levels, t)
 		if err != nil {
 			actions.Errorf("building slack message for %s: %v", team.Name, err.Error())
 			continue
 		}
 
-		// If all repos are compliant, we skip sending a slack message
+		// If all services are compliant, we skip sending a slack message.
 		if slackMessage == "" {
 			continue
 		}
@@ -113,13 +115,10 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 			continue
 		}
 
-		fmt.Printf("got channel: %s", slackChannel)
-
-		slackChannel = "dt-slack-test"
-
 		channels, err := slack.GetAllChannels(slackClient)
 		if err != nil {
-			return errors.Wrap(err, "could not get slack channels")
+			actions.Errorf("get channels for %s: %v", team.Name, err.Error())
+			continue
 		}
 
 		slackChannelID, err := slack.FindChannelID(channels, slackChannel)
@@ -141,6 +140,7 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 	return nil
 }
 
+// buildSlackMessage builds a slack message for all non complient service that the provided team owns.
 func buildSlackMessage(client *opslevelGo.Client, team *opslevelGo.Team,
 	levels []opslevelGo.Level, t *template.Template) (string, error) {
 	services, err := client.ListServicesWithOwner(team.Alias)
@@ -170,6 +170,7 @@ func buildSlackMessage(client *opslevelGo.Client, team *opslevelGo.Team,
 			continue
 		}
 
+		// If the service is complient, we skip adding to the slack message.
 		if isCompliant {
 			continue
 		}
