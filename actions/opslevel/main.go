@@ -36,10 +36,7 @@ type SlackMessageFields struct {
 	MaturityReportHyperlink string
 }
 
-const slackMessageFooter string = `
-Starting next quarter, these repositories will no longer be able to deploy.
-Please update them to the specified maturity level.
-`
+const slackMessageHeader string = "Starting next quarter, deployments for these repositories will be blocked if they are not updated to meet their expected service maturity level in OpsLevel.\n" //nolint:lll // Why: Slack message string.
 
 func main() {
 	exitCode := 1
@@ -110,7 +107,7 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 		if slackMessage == "" {
 			continue
 		}
-		slackMessage += slackMessageFooter
+		slackMessage = slackMessageHeader + slackMessage
 
 		slackChannel, err := opslevel.GetSlackChannel(team)
 		if err != nil {
