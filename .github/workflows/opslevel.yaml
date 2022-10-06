@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+name: opslevel
+on:
+  workflow_call:
+    secrets:
+      OUTREACH_DOCKER_JSON:
+        required: true
+      SLACK_TOKEN:
+        required: true
+      OPSLEVEL_TOKEN:
+        required: true
+
+    inputs:
+      image_tag:
+        type: string
+        default: latest
+        required: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    container:
+      image: gcr.io/outreach-docker/actions/opslevel:${{ inputs.image_tag }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        OPSLEVEL_TOKEN: ${{ secrets.OPSLEVEL_TOKEN }}
+      credentials:
+        username: _json_key
+        password: ${{ secrets.OUTREACH_DOCKER_JSON }}
+    steps:
+      - run: /usr/local/bin/action

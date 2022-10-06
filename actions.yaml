@@ -2,3 +2,4 @@ actions:
   - conventional_commit
   - commitguard
   - brokenbranch
+  - opslevel

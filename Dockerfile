@@ -16,6 +16,7 @@ COPY actions/${ACTION}/ ./cmd/action/
 COPY go.mod go.sum Makefile bootstrap.lock ./
 COPY scripts/ ./scripts/
 COPY internal/ ./internal/
+COPY pkg/ ./pkg/
 
 # Cache dependencies across builds
 RUN --mount=type=ssh --mount=type=cache,target=/go/pkg go mod download
