@@ -26,14 +26,12 @@ var slackMessage string
 
 // SlackMessageFields holds the fields needed to execute the slack message template.
 type SlackMessageFields struct {
-	// RepoHyperlink is a slack compliant hyperlink to the github repository.
-	RepoHyperlink string
-	// ExpectedLevel is the level that the service should be at.
-	ExpectedLevel string
-	// ActualLevel is the current level of the service.
-	ActualLevel string
 	// MaturityReportHyperlink is a slack compliant hyperlink to the OpsLevel maturity report.
 	MaturityReportHyperlink string
+	// ActualLevel is the current level of the service.
+	ActualLevel string
+	// ExpectedLevel is the level that the service should be at.
+	ExpectedLevel string
 }
 
 const slackMessageHeader string = "Starting next quarter, deployments for these repositories will be blocked if they are not updated to meet their expected service maturity level in OpsLevel.\n" //nolint:lll // Why: Slack message string.
@@ -176,18 +174,6 @@ func buildSlackMessage(client *opslevelGo.Client, team *opslevelGo.Team,
 			continue
 		}
 
-		repoID, err := opslevel.GetRepositoryID(service)
-		if err != nil {
-			actions.Errorf("get repository id for %s: %v", service.Name, err.Error())
-			continue
-		}
-
-		repo, err := client.GetRepository(repoID)
-		if err != nil {
-			actions.Errorf("get repository for %s: %v", service.Name, err.Error())
-			continue
-		}
-
 		expectedLevel, err := opslevel.GetExpectedLevel(service, levels)
 		if err != nil {
 			actions.Errorf("get expected level for %s: %v", service.Name, err.Error())
@@ -197,10 +183,9 @@ func buildSlackMessage(client *opslevelGo.Client, team *opslevelGo.Team,
 		if err := t.Execute(
 			&slackMessage,
 			SlackMessageFields{
-				RepoHyperlink: slack.Hyperlink(service.Name, repo.Url),
-				ExpectedLevel: expectedLevel,
 				ActualLevel:   opslevel.GetLevel(sm),
-				MaturityReportHyperlink: slack.Hyperlink("Maturity Report",
+				ExpectedLevel: expectedLevel,
+				MaturityReportHyperlink: slack.Hyperlink(service.Name,
 					opslevel.GetMaturityReportURL(service)),
 			},
 		); err != nil {
