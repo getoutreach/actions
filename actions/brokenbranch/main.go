@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/getoutreach/actions/internal/gh"
-	"github.com/getoutreach/actions/internal/slack"
+	"github.com/getoutreach/actions/pkg/gh"
+	"github.com/getoutreach/actions/pkg/slack"
 	"github.com/google/go-github/v43/github"
 	"github.com/pkg/errors"
 	actions "github.com/sethvargo/go-githubactions"
