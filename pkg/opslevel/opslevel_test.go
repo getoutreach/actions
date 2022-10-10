@@ -89,7 +89,7 @@ func TestIsComplient(t *testing.T) {
 			sm: &opslevelGo.ServiceMaturity{
 				MaturityReport: opslevelGo.MaturityReport{
 					OverallLevel: opslevelGo.Level{
-						Index: 2,
+						Index: 3,
 					},
 				},
 			},
@@ -123,7 +123,7 @@ func TestIsComplient(t *testing.T) {
 			sm: &opslevelGo.ServiceMaturity{
 				MaturityReport: opslevelGo.MaturityReport{
 					OverallLevel: opslevelGo.Level{
-						Index: 3,
+						Index: 4,
 					},
 				},
 			},
@@ -176,8 +176,8 @@ func TestGetExpectedLevel(t *testing.T) {
 			Name:  "Beginner",
 		},
 		{
-			Index: 2,
-			Name:  "Silver",
+			Index: 3,
+			Name:  "Silver (Upcoming)",
 		},
 		{
 			Index: 1,
@@ -207,7 +207,7 @@ func TestGetExpectedLevel(t *testing.T) {
 					Index: 2,
 				},
 			},
-			expected:  "Silver",
+			expected:  "Silver (Upcoming)",
 			expectErr: false,
 		},
 		{
@@ -229,7 +229,7 @@ func TestGetExpectedLevel(t *testing.T) {
 				if tc.expectErr {
 					return
 				}
-				t.Fatalf("unexpected error")
+				t.Fatalf("unexpected error: %v", err)
 			}
 			if tc.expectErr {
 				t.Fatalf("expected and error but did not receive one")
