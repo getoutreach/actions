@@ -58,7 +58,7 @@ func TestGetServiceAlias(t *testing.T) {
 				if tc.expectErr {
 					return
 				}
-				t.Fatalf("unexpected error")
+				t.Fatalf("unexpected error: %v", err)
 			}
 			if tc.expectErr {
 				t.Fatalf("expected and error but did not receive one")
@@ -156,7 +156,7 @@ func TestIsComplient(t *testing.T) {
 				if tc.expectErr {
 					return
 				}
-				t.Fatalf("unexpected error")
+				t.Fatalf("unexpected error: %v", err)
 			}
 			if tc.expectErr {
 				t.Fatalf("expected and error but did not receive one")
@@ -219,6 +219,16 @@ func TestGetExpectedLevel(t *testing.T) {
 			},
 			expected:  "",
 			expectErr: true,
+		},
+		{
+			name: "gets last level with indexes starting at 1",
+			service: opslevelGo.Service{
+				Lifecycle: opslevelGo.Lifecycle{
+					Index: opslevel.EndOfLifeLifecycle,
+				},
+			},
+			expected:  "Beginner",
+			expectErr: false,
 		},
 	}
 
@@ -335,7 +345,7 @@ func TestGetSlackChannel(t *testing.T) {
 				if tc.expectErr {
 					return
 				}
-				t.Fatalf("unexpected error")
+				t.Fatalf("unexpected error: %v", err)
 			}
 			if tc.expectErr {
 				t.Fatalf("expected and error but did not receive one")
