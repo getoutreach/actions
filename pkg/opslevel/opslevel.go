@@ -14,6 +14,35 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Initializes constants for OpsLevel level and lifecycle indexes.
+const (
+	// BeginnerLevel is the index for the Beginner level in OpsLevel.
+	BeginnerLevel = 0
+	// BronzeLevel is the index for Bronze level in  OpsLevel.
+	BronzeLevel = 1
+	// SilverLevel is the index for Silver level in  OpsLevel.
+	SilverLevel = 2
+	// SilverUpcomingLevel is the index for the Silver (Upcoming) level in OpsLevel.
+	SilverUpcomingLevel = 3
+	// GoldLevel is the index for Gold level in  OpsLevel.
+	GoldLevel = 4
+	// PlatinumLevel is the index for Platinum level in  OpsLevel.
+	PlatinumLevel = 5
+
+	// DevelopmentLifecycle if the index for the Development lifecycle in OpsLevel.
+	DevelopmentLifecycle = 1
+	// PrivateBetaLifecycle if the index for the Private Beta lifecycle in OpsLevel.
+	PrivateBetaLifecycle = 2
+	// PublicBetaLifecycle if the index for the Public Beta lifecycle in OpsLevel.
+	PublicBetaLifecycle = 3
+	// PublicLifecycle if the index for the Public lifecycle in OpsLevel.
+	PublicLifecycle = 4
+	// OpsLifecycle if the index for the Ops lifecycle in OpsLevel.
+	OpsLifecycle = 5
+	// EndOfLifeLifecycle if the index for the Endo-of-Life lifecycle in OpsLevel.
+	EndOfLifeLifecycle = 6
+)
+
 // NewClient returns a new opslevel client configured with the token we expect to exist in
 // the environment.
 func NewClient() (*opslevel.Client, error) {
@@ -25,20 +54,14 @@ func NewClient() (*opslevel.Client, error) {
 }
 
 // LifecycleToLevel maps lifecycle index to level index.
-// We want to keep this at the index level in case names or other attributes change
+// We want to keep this at the index level in case names or other attributes change.
 var LifecycleToLevel = map[int]int{
-	// In Development >= Beginner
-	1: 0,
-	// Private Beta >= Silver (Upcoming)
-	2: 3,
-	// Public Beta >= Silver (Upcoming)
-	3: 3,
-	// Public/GA >= Silver (Upcoming)
-	4: 3,
-	// Ops >= Silver (Upcoming)
-	5: 3,
-	// End-of-life >= Beginner
-	6: 0,
+	DevelopmentLifecycle: BeginnerLevel,
+	PrivateBetaLifecycle: SilverUpcomingLevel,
+	PublicBetaLifecycle:  SilverUpcomingLevel,
+	PublicLifecycle:      SilverUpcomingLevel,
+	OpsLifecycle:         SilverUpcomingLevel,
+	EndOfLifeLifecycle:   BeginnerLevel,
 }
 
 // GetServiceAlias safely retrieves the first alias for the provided service.
