@@ -71,7 +71,7 @@ func TestGetServiceAlias(t *testing.T) {
 	}
 }
 
-func TestIsComplient(t *testing.T) {
+func TestIsCompliant(t *testing.T) {
 	testCases := []struct {
 		name      string
 		service   opslevelGo.Service

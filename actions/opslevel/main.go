@@ -140,7 +140,7 @@ func RunAction(ctx context.Context, _ *github.Client, _ *actions.GitHubContext,
 	return nil
 }
 
-// buildSlackMessage builds a slack message for all non complient service that the provided team owns.
+// buildSlackMessage builds a slack message for all non compliant service that the provided team owns.
 func buildSlackMessage(client *opslevelGo.Client, team *opslevelGo.Team,
 	levels []opslevelGo.Level, t *template.Template) (string, error) {
 	services, err := client.ListServicesWithOwner(team.Alias)
@@ -166,11 +166,11 @@ func buildSlackMessage(client *opslevelGo.Client, team *opslevelGo.Team,
 
 		isCompliant, err := opslevel.IsCompliant(service, sm)
 		if err != nil {
-			actions.Errorf("is complient for %s: %v", service.Name, err.Error())
+			actions.Errorf("is compliant for %s: %v", service.Name, err.Error())
 			continue
 		}
 
-		// If the service is complient, we skip adding to the slack message.
+		// If the service is compliant, we skip adding to the slack message.
 		if isCompliant {
 			continue
 		}
