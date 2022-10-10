@@ -29,14 +29,14 @@ func NewClient() (*opslevel.Client, error) {
 var LifecycleToLevel = map[int]int{
 	// In Development >= Beginner
 	1: 0,
-	// Private Beta >= Silver
-	2: 2,
-	// Public Beta >= Silver
-	3: 2,
-	// Public/GA >= Silver
-	4: 2,
-	// Ops >= Silver
-	5: 2,
+	// Private Beta >= Silver (Upcoming)
+	2: 3,
+	// Public Beta >= Silver (Upcoming)
+	3: 3,
+	// Public/GA >= Silver (Upcoming)
+	4: 3,
+	// Ops >= Silver (Upcoming)
+	5: 3,
 	// End-of-life >= Beginner
 	6: 0,
 }
