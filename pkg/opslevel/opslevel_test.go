@@ -83,13 +83,13 @@ func TestIsComplient(t *testing.T) {
 			name: "level matches expected level",
 			service: opslevelGo.Service{
 				Lifecycle: opslevelGo.Lifecycle{
-					Index: 4,
+					Index: opslevel.PublicLifecycle,
 				},
 			},
 			sm: &opslevelGo.ServiceMaturity{
 				MaturityReport: opslevelGo.MaturityReport{
 					OverallLevel: opslevelGo.Level{
-						Index: 2,
+						Index: opslevel.SilverUpcomingLevel,
 					},
 				},
 			},
@@ -100,13 +100,13 @@ func TestIsComplient(t *testing.T) {
 			name: "level below expected level",
 			service: opslevelGo.Service{
 				Lifecycle: opslevelGo.Lifecycle{
-					Index: 4,
+					Index: opslevel.PublicLifecycle,
 				},
 			},
 			sm: &opslevelGo.ServiceMaturity{
 				MaturityReport: opslevelGo.MaturityReport{
 					OverallLevel: opslevelGo.Level{
-						Index: 1,
+						Index: opslevel.BronzeLevel,
 					},
 				},
 			},
@@ -117,13 +117,13 @@ func TestIsComplient(t *testing.T) {
 			name: "level above expected level",
 			service: opslevelGo.Service{
 				Lifecycle: opslevelGo.Lifecycle{
-					Index: 4,
+					Index: opslevel.PublicLifecycle,
 				},
 			},
 			sm: &opslevelGo.ServiceMaturity{
 				MaturityReport: opslevelGo.MaturityReport{
 					OverallLevel: opslevelGo.Level{
-						Index: 3,
+						Index: opslevel.GoldLevel,
 					},
 				},
 			},
@@ -140,7 +140,7 @@ func TestIsComplient(t *testing.T) {
 			sm: &opslevelGo.ServiceMaturity{
 				MaturityReport: opslevelGo.MaturityReport{
 					OverallLevel: opslevelGo.Level{
-						Index: 3,
+						Index: opslevel.SilverUpcomingLevel,
 					},
 				},
 			},
@@ -172,15 +172,15 @@ func TestIsComplient(t *testing.T) {
 func TestGetExpectedLevel(t *testing.T) {
 	levels := []opslevelGo.Level{
 		{
-			Index: 0,
+			Index: opslevel.BeginnerLevel,
 			Name:  "Beginner",
 		},
 		{
-			Index: 2,
-			Name:  "Silver",
+			Index: opslevel.SilverUpcomingLevel,
+			Name:  "Silver (Upcoming)",
 		},
 		{
-			Index: 1,
+			Index: opslevel.BronzeLevel,
 			Name:  "Bronze",
 		},
 	}
@@ -194,7 +194,7 @@ func TestGetExpectedLevel(t *testing.T) {
 			name: "level matching index",
 			service: opslevelGo.Service{
 				Lifecycle: opslevelGo.Lifecycle{
-					Index: 0,
+					Index: opslevel.DevelopmentLifecycle,
 				},
 			},
 			expected:  "Beginner",
@@ -204,10 +204,10 @@ func TestGetExpectedLevel(t *testing.T) {
 			name: "level not matching index",
 			service: opslevelGo.Service{
 				Lifecycle: opslevelGo.Lifecycle{
-					Index: 2,
+					Index: opslevel.PrivateBetaLifecycle,
 				},
 			},
-			expected:  "Silver",
+			expected:  "Silver (Upcoming)",
 			expectErr: false,
 		},
 		{
@@ -229,7 +229,7 @@ func TestGetExpectedLevel(t *testing.T) {
 				if tc.expectErr {
 					return
 				}
-				t.Fatalf("unexpected error")
+				t.Fatalf("unexpected error: %v", err)
 			}
 			if tc.expectErr {
 				t.Fatalf("expected and error but did not receive one")
