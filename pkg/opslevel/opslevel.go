@@ -77,7 +77,7 @@ func GetServiceAlias(service *opslevel.Service) (string, error) {
 // This check is primarily controlled by the LifecycleToLevel map
 func IsCompliant(service *opslevel.Service, sm *opslevel.ServiceMaturity) (bool, error) {
 	currentLevelIndex := sm.MaturityReport.OverallLevel.Index
-	if len(LifecycleToLevel) <= service.Lifecycle.Index {
+	if len(LifecycleToLevel) < service.Lifecycle.Index {
 		return false, fmt.Errorf("unsupported lifecycle %d %s",
 			service.Lifecycle.Index, service.Lifecycle.Name)
 	}
