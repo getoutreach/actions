@@ -77,7 +77,7 @@ func GetServiceAlias(service *opslevel.Service) (string, error) {
 // This check is primarily controlled by the LifecycleToLevel map
 func IsCompliant(service *opslevel.Service, sm *opslevel.ServiceMaturity) (bool, error) {
 	currentLevelIndex := sm.MaturityReport.OverallLevel.Index
-	if len(LifecycleToLevel) <= service.Lifecycle.Index {
+	if len(LifecycleToLevel) < service.Lifecycle.Index {
 		return false, fmt.Errorf("unsupported lifecycle %d %s",
 			service.Lifecycle.Index, service.Lifecycle.Name)
 	}
@@ -88,7 +88,7 @@ func IsCompliant(service *opslevel.Service, sm *opslevel.ServiceMaturity) (bool,
 
 // GetExpectedLevel retrieves the expected maturity level of the service
 func GetExpectedLevel(service *opslevel.Service, levels []opslevel.Level) (string, error) {
-	if len(LifecycleToLevel) <= service.Lifecycle.Index {
+	if len(LifecycleToLevel) < service.Lifecycle.Index {
 		return "", fmt.Errorf("unsupported lifecycle %d %s",
 			service.Lifecycle.Index, service.Lifecycle.Name)
 	}
@@ -118,7 +118,7 @@ func GetSlackChannel(team *opslevel.Team) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("No slach channel found for team")
+	return "", fmt.Errorf("no slack channel found for team")
 }
 
 // GetMaturityReportURL retrieves the html url for the maturity report
