@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/getoutreach/goql v1.9.3
-	github.com/opslevel/opslevel-go/v2022 v2022.8.25
+	github.com/opslevel/opslevel-go/v2022 v2022.10.22
 	github.com/sethvargo/go-githubactions v1.0.0
 	github.com/slack-go/slack v0.11.3
 )
@@ -19,14 +19,14 @@ require (
 	github.com/google/go-github/v29 v29.0.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/gosimple/slug v1.12.0 // indirect
+	github.com/gosimple/slug v1.13.1 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.1 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/relvacode/iso8601 v1.1.0 // indirect
-	github.com/rs/zerolog v1.27.0 // indirect
+	github.com/rs/zerolog v1.28.0 // indirect
 	github.com/shurcooL/graphql v0.0.0-20220606043923-3cf50f8a0a29 // indirect
 	github.com/stretchr/testify v1.7.1 // indirect
 	golang.org/x/crypto v0.0.0-20220408190544-5352b0902921 // indirect
