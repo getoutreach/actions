@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+name: settings
+on:
+  workflow_call:
+    secrets:
+      OUTREACH_DOCKER_JSON:
+        required: true
+      PAT_OUTREACH_CI:
+        required: false
+    inputs:
+      image_tag:
+        type: string
+        default: latest
+        required: false
+      allowRebaseMerge:
+        type: boolean
+        default: true
+        required: false
+      allowSquashMerge:
+        type: boolean
+        default: true
+        required: false
+      allowMergeCommit:
+        type: boolean
+        default: true
+        required: false
+      allowAutoMerge:
+        type: boolean
+        default: false
+        required: false
+      requireCodeOwnerReviewers:
+        type: boolean
+        default: true
+        required: false
+      requiredApprovingReviewCount:
+        type: number
+        default: 1
+        required: false
+      requiredConversationResolution:
+        type: boolean
+        default: false
+        required: false
+      requiredStatusChecks:
+        type: string
+        default: ""
+        description: "A comma separated list of required status checks (github action inputs do not support arrays)"
+        required: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    container:
+      image: gcr.io/outreach-docker/actions/settings:${{ inputs.image_tag }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
+        ALLOW_REBASE_MERGE: ${{ inputs.allowRebaseMerge }}
+        ALLOW_SQUASH_MERGE: ${{ inputs.allowSquashMerge }}
+        ALLOW_MERGE_COMMIT: ${{ inputs.allowMergeCommit }}
+        ALLOW_AUTO_MERGE: ${{ inputs.allowAutoMerge }}
+        REQUIRE_CODEOWNER_REVIEWERS: ${{ inputs.requireCodeOwnerReviewers }}
+        REQUIRED_APPROVING_REVIEW_COUNT: ${{ inputs.requiredApprovingReviewCount }}
+        REQUIRED_CONVERSATION_RESOLUTION: ${{ inputs.requiredConversationResolution }}
+        REQUIRED_STATUS_CHECKS: ${{ inputs.requiredStatusChecks }}
+      credentials:
+        username: _json_key
+        password: ${{ secrets.OUTREACH_DOCKER_JSON }}
+    steps:
+      - run: /usr/local/bin/action

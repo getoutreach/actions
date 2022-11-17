@@ -3,3 +3,4 @@ actions:
   - commitguard
   - brokenbranch
   - opslevel
+  - settings
