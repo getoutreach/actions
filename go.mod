@@ -6,7 +6,7 @@ require (
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/getoutreach/goql v1.9.3
 	github.com/sethvargo/go-githubactions v1.0.0
-	github.com/slack-go/slack v0.11.3
+	github.com/slack-go/slack v0.11.4
 )
 
 require github.com/getoutreach/gobox v1.54.0 // indirect
