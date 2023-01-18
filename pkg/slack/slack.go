@@ -59,6 +59,7 @@ func GetAllChannels(client *slack.Client) ([]slack.Channel, error) {
 		var rateLimitedError *slack.RateLimitedError
 		if errors.As(err, &rateLimitedError) {
 			if rateLimitedError.Retryable() {
+				fmt.Println("retrying get slack conversations")
 				time.Sleep(rateLimitedError.RetryAfter)
 				c, nextCursor, err = client.GetConversations(params)
 			} else {
@@ -79,6 +80,7 @@ func GetAllChannels(client *slack.Client) ([]slack.Channel, error) {
 			var rateLimitedError *slack.RateLimitedError
 			if errors.As(err, &rateLimitedError) {
 				if rateLimitedError.Retryable() {
+					fmt.Println("retrying get slack conversations")
 					time.Sleep(rateLimitedError.RetryAfter)
 					c, nextCursor, err = client.GetConversations(params)
 				} else {
@@ -101,6 +103,7 @@ func JoinConversationContext(ctx context.Context, client *slack.Client, channelI
 		var rateLimitedError *slack.RateLimitedError
 		if errors.As(err, &rateLimitedError) {
 			if rateLimitedError.Retryable() {
+				fmt.Println("retrying join slack conversation")
 				time.Sleep(rateLimitedError.RetryAfter)
 				_, _, _, err = client.JoinConversationContext(ctx, channelID)
 				return err
@@ -118,6 +121,7 @@ func PostMessageContext(ctx context.Context, client *slack.Client, channelID, me
 		var rateLimitedError *slack.RateLimitedError
 		if errors.As(err, &rateLimitedError) {
 			if rateLimitedError.Retryable() {
+				fmt.Println("retrying post slack message")
 				time.Sleep(rateLimitedError.RetryAfter)
 				_, _, err = client.PostMessageContext(ctx, channelID)
 				return err
