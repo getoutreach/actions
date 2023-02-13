@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/google/go-github/v43/github"
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_allowBypass(t *testing.T) {
@@ -95,6 +96,49 @@ func Test_allowBypass(t *testing.T) {
 
 			if got := allowBypass(tt.args.commit); got != tt.want {
 				t.Errorf("allowBypass() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_validateCommitMessage(t *testing.T) {
+	type args struct {
+		commitMessage string
+	}
+	tests := []struct {
+		name   string
+		args   args
+		errMsg string
+	}{
+		{
+			name: "fix",
+			args: args{
+				commitMessage: "fix(pencil): stop graphite breaking when too much pressure applied",
+			},
+			errMsg: "",
+		},
+		{
+			name: "feat",
+			args: args{
+				commitMessage: "feat(pencil): add 'graphiteWidth' option",
+			},
+			errMsg: "",
+		},
+		{
+			name: "feat without space",
+			args: args{
+				commitMessage: "feat(pencil):add 'graphiteWidth' option",
+			},
+			errMsg: "pr title does not match conventional commit syntax",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateCommitMessage(tt.args.commitMessage)
+			if tt.errMsg != "" {
+				assert.EqualError(t, err, tt.errMsg)
+			} else {
+				assert.Nil(t, err)
 			}
 		})
 	}
