@@ -131,6 +131,13 @@ func Test_validateCommitMessage(t *testing.T) {
 			},
 			errMsg: "pr title does not match conventional commit syntax",
 		},
+		{
+			name: "invalid type",
+			args: args{
+				commitMessage: "invalid(pencil): add 'graphiteWidth' option",
+			},
+			errMsg: "commit type \"invalid\" is not in the list of allowed commit types",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
