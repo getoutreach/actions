@@ -48,7 +48,7 @@ var (
 	// commit title.
 	//
 	// For examples, see https://regex101.com/r/gkNDNK/1
-	reConventionalCommit = regexp.MustCompile(`^(?P<type>\w+)(?P<scope>\([-\w\/]+\))?(?P<breaking>!)?:\s?(?P<message>.*?)$`)
+	reConventionalCommit = regexp.MustCompile(`^(?P<type>\w+)(?P<scope>\([-\w\/]+\))?(?P<breaking>!)?:\s(?P<message>.*?)$`)
 
 	// reConventionalCommitType stores the index of the type named capture group for
 	// reConventionalCommit.
@@ -126,6 +126,28 @@ func allowBypass(commit *github.RepositoryCommit) bool {
 	return false
 }
 
+// validateCommitMessage checks if the commit message meets conventional commit requirement or not.
+func validateCommitMessage(commitMessage string) error {
+	matches := reConventionalCommit.FindStringSubmatch(commitMessage)
+	if matches == nil {
+		return errors.New("pr title does not match conventional commit syntax")
+	}
+
+	cType := matches[reConventionalCommitType]
+	scope := matches[reConventionalCommitScope]
+	breaking := matches[reConventionalCommitBreaking]
+	message := matches[reConventionalCommitMessage]
+
+	if _, exists := allowedCommitTypes[cType]; !exists {
+		return fmt.Errorf("commit type %q is not in the list of allowed commit types", cType)
+	}
+
+	actions.Infof("successfully parsed conventional commit:\ntype: [%s]\nscope: [%s]\nbreaking: [%t]\nmessage: [%s]",
+		cType, strings.TrimSuffix(strings.TrimPrefix(scope, "("), ")"), breaking == "!", message)
+
+	return nil
+}
+
 // RunAction is where the actual implementation of the GitHub action goes and is called
 // by func main.
 func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.GitHubContext) error {
@@ -164,22 +186,5 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 		}
 	}
 
-	matches := reConventionalCommit.FindStringSubmatch(pr.Title)
-	if matches == nil {
-		return errors.New("pr title does not match conventional commit syntax")
-	}
-
-	cType := matches[reConventionalCommitType]
-	scope := matches[reConventionalCommitScope]
-	breaking := matches[reConventionalCommitBreaking]
-	message := matches[reConventionalCommitMessage]
-
-	if _, exists := allowedCommitTypes[cType]; !exists {
-		return fmt.Errorf("commit type %q is not in the list of allowed commit types", cType)
-	}
-
-	actions.Infof("successfully parsed conventional commit:\ntype: [%s]\nscope: [%s]\nbreaking: [%t]\nmessage: [%s]",
-		cType, strings.TrimSuffix(strings.TrimPrefix(scope, "("), ")"), breaking == "!", message)
-
-	return nil
+	return validateCommitMessage(pr.Title)
 }
