@@ -7,7 +7,7 @@ require (
 	github.com/getoutreach/goql v1.9.3
 	github.com/sethvargo/go-githubactions v1.0.0
 	github.com/slack-go/slack v0.11.3
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.8.3
 )
 
 require github.com/getoutreach/gobox v1.54.0 // indirect
