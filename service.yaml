@@ -1,7 +1,7 @@
 name: actions
 arguments:
-  coverage:
-    provider: codecov
+  ciOptions:
+    skipDocker: true
   description: |
     This is a collection of actions that are used by Outreach.
   lifecycle: public_ga
