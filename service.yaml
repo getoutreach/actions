@@ -1,7 +1,7 @@
 name: actions
 arguments:
-  coverage:
-    provider: codecov
+  ciOptions:
+    skipDocker: true
   description: |
     This is a collection of actions that are used by Outreach.
   lifecycle: public_ga
@@ -17,7 +17,5 @@ modules:
   - name: github.com/getoutreach/stencil-base
   - name: github.com/getoutreach/stencil-golang
   - name: github.com/getoutreach/stencil-circleci
-    channel: main
   - name: github.com/getoutreach/stencil-actions
   - name: github.com/getoutreach/stencil-discovery
-migrated: true
