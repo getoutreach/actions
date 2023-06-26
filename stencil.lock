@@ -1,20 +1,23 @@
-version: v1.28.1-rc.1
+version: v1.35.0
 modules:
+    - name: github.com/getoutreach/devbase
+      url: https://github.com/getoutreach/devbase
+      version: v2.14.0
     - name: github.com/getoutreach/stencil-actions
       url: https://github.com/getoutreach/stencil-actions
-      version: v0.1.0
+      version: v0.3.0
     - name: github.com/getoutreach/stencil-base
       url: https://github.com/getoutreach/stencil-base
-      version: v0.6.0
+      version: v0.12.0
     - name: github.com/getoutreach/stencil-circleci
       url: https://github.com/getoutreach/stencil-circleci
-      version: main
+      version: v1.10.0
     - name: github.com/getoutreach/stencil-discovery
       url: https://github.com/getoutreach/stencil-discovery
-      version: v1.3.0
+      version: v1.7.0
     - name: github.com/getoutreach/stencil-golang
       url: https://github.com/getoutreach/stencil-golang
-      version: v1.3.0
+      version: v1.12.0
 files:
     - name: .circleci/config.yml
       template: .circleci/config.yml.tpl
@@ -87,10 +90,10 @@ files:
       module: github.com/getoutreach/stencil-base
     - name: scripts/devbase.sh
       template: scripts/devbase.sh.tpl
-      module: github.com/getoutreach/stencil-base
+      module: github.com/getoutreach/devbase
     - name: scripts/golangci.yml
       template: scripts/golangci.yml.tpl
       module: github.com/getoutreach/stencil-golang
     - name: scripts/shell-wrapper.sh
       template: scripts/shell-wrapper.sh.tpl
-      module: github.com/getoutreach/stencil-base
+      module: github.com/getoutreach/devbase
