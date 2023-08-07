@@ -8,8 +8,8 @@ github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumC
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/getoutreach/gobox v1.70.5 h1:lRYCnnjf72aE79jtHbRBHFGcqvPvwoBBiU2/MoaupUE=
 github.com/getoutreach/gobox v1.70.5/go.mod h1:OUNenxrlCtCy3aWyRfWz78lcXQZU2gvTHWrMjyGS2eU=
-github.com/getoutreach/goql v1.9.3 h1:9XlALJBGr8eWqTdY4KRIVq2l1f88rjN0TEql1wACtpo=
-github.com/getoutreach/goql v1.9.3/go.mod h1:swU+3Ej6KKR3C6JgLZKlmX4bnDmThKNvwYYC/Bb1tu4=
+github.com/getoutreach/goql v1.11.1 h1:0bp7go/m3/FRu3yeD9o/iG1vTj9o1MQ1veu8W0CmlrE=
+github.com/getoutreach/goql v1.11.1/go.mod h1:4AmZio6UX/nd5QLTe9qsv+/SlLBmhfBoC8T4XJ0xwEI=
 github.com/go-test/deep v1.0.4 h1:u2CU3YKy9I2pmu9pX0eq50wCgjfGIt539SqR7FbHiho=
 github.com/go-test/deep v1.0.4/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
