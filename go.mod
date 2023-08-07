@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/getoutreach/goql v1.9.3
-	github.com/sethvargo/go-githubactions v1.0.0
+	github.com/sethvargo/go-githubactions v1.1.0
 	github.com/slack-go/slack v0.11.3
 	github.com/stretchr/testify v1.8.2
 )
@@ -32,6 +32,6 @@ require (
 require (
 	github.com/google/go-github/v43 v43.0.0
 	github.com/pkg/errors v0.9.1
-	github.com/sethvargo/go-envconfig v0.6.1 // indirect
+	github.com/sethvargo/go-envconfig v0.8.0 // indirect
 	golang.org/x/oauth2 v0.4.0
 )
