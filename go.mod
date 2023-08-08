@@ -6,7 +6,7 @@ require (
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/getoutreach/goql v1.11.1
 	github.com/sethvargo/go-githubactions v1.1.0
-	github.com/slack-go/slack v0.11.3
+	github.com/slack-go/slack v0.12.2
 	github.com/stretchr/testify v1.8.4
 )
 
