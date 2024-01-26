@@ -4,13 +4,13 @@ go 1.19
 
 require (
 	github.com/bradleyfalzon/ghinstallation v1.1.1
-	github.com/getoutreach/goql v1.11.2
+	github.com/getoutreach/goql v1.12.0
 	github.com/sethvargo/go-githubactions v1.1.0
 	github.com/slack-go/slack v0.12.3
 	github.com/stretchr/testify v1.8.4
 )
 
-require github.com/getoutreach/gobox v1.71.0 // indirect
+require github.com/getoutreach/gobox v1.73.2 // indirect
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
