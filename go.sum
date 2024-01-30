@@ -5,10 +5,10 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
-github.com/getoutreach/gobox v1.71.0 h1:5T3G94y6aG7lqnfzXzMhuR/hw0VnNGwU7VQLml+Lwsw=
-github.com/getoutreach/gobox v1.71.0/go.mod h1:NMFEug44bFUQnpGTS9vov/WsZK36fnQFLDl+3p/yeas=
-github.com/getoutreach/goql v1.11.2 h1:2MR0Fr6MT6Le9S/xS6sLdiQg+fDT7sn9y8ka0ArMn9I=
-github.com/getoutreach/goql v1.11.2/go.mod h1:y+kUiWUXiS1htWOvvO6pWs1y85tYqdgZl+Firhior+E=
+github.com/getoutreach/gobox v1.73.2 h1:LDTPzWHj37d/GsYCPJIHHais+f+7aUP8ZS9YuU+qJXU=
+github.com/getoutreach/gobox v1.73.2/go.mod h1:Kx002WFAj+lUVqo7LLxSaQ1w2Mcqg1gefd+qQKr/QGM=
+github.com/getoutreach/goql v1.12.0 h1:ZI/488vmC0ooZS22+Ymya5dRKyvEhyLMTX3T9lX3LeM=
+github.com/getoutreach/goql v1.12.0/go.mod h1:ooI2AjuC1xZiGh8546eXkDgqED54UHQ0qZlLAIqdj6Q=
 github.com/go-test/deep v1.0.4 h1:u2CU3YKy9I2pmu9pX0eq50wCgjfGIt539SqR7FbHiho=
 github.com/go-test/deep v1.0.4/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
@@ -80,4 +80,4 @@ gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntN
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
-gotest.tools/v3 v3.4.0 h1:ZazjZUfuVeZGLAmlKKuyv3IKP5orXcwtOwDQH6YVr6o=
+gotest.tools/v3 v3.5.0 h1:Ljk6PdHdOhAb5aDMWXjDLMMhph+BpztA4v1QdqEW2eY=
