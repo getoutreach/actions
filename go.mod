@@ -1,6 +1,8 @@
 module github.com/getoutreach/actions
 
-go 1.19
+go 1.21
+
+toolchain go1.21.5
 
 require (
 	github.com/bradleyfalzon/ghinstallation v1.1.1
