@@ -1,11 +1,13 @@
 module github.com/getoutreach/actions
 
-go 1.19
+go 1.21
+
+toolchain go1.21.5
 
 require (
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/getoutreach/goql v1.12.0
-	github.com/sethvargo/go-githubactions v1.1.0
+	github.com/sethvargo/go-githubactions v1.2.0
 	github.com/slack-go/slack v0.12.3
 	github.com/stretchr/testify v1.8.4
 )
@@ -32,6 +34,5 @@ require (
 require (
 	github.com/google/go-github/v43 v43.0.0
 	github.com/pkg/errors v0.9.1
-	github.com/sethvargo/go-envconfig v0.8.0 // indirect
 	golang.org/x/oauth2 v0.16.0
 )
