@@ -2,7 +2,7 @@
 # syntax, such as anchors, will be fixed automatically.
 version: 2.1
 orbs:
-  shared: getoutreach/shared@2.24.0
+  shared: getoutreach/shared@2.26.0
   queue: eddiewebb/queue@2.2.1
 
 parameters:
@@ -18,6 +18,7 @@ contexts: &contexts
   - confluence
   - circleci-credentials
   - tray-webhooks
+  - wizcli
   ## <<Stencil::Block(extraContexts)>>
   - docker-registry
   - ghaccesstoken
