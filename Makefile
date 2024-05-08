@@ -12,4 +12,7 @@ new-action:
 .PHONY: test-action
 test-action:
 	./scripts/test-action.sh $(name) $(payload)
+
+post-stencil::
+	./scripts/shell-wrapper.sh catalog-sync.sh
 ## <</Stencil::Block>>
