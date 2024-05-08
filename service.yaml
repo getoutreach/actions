@@ -1,34 +1,27 @@
 name: actions
-modules:
-  - name: github.com/getoutreach/stencil-base
-    prerelease: false
-    channel: rc
-  - name: github.com/getoutreach/stencil-golang
-    prerelease: false
-    channel: rc
-  - name: github.com/getoutreach/stencil-circleci
-    prerelease: false
-    channel: rc
-  - name: github.com/getoutreach/stencil-actions
-    prerelease: false
-    channel: rc
-  - name: github.com/getoutreach/stencil-discovery
-    prerelease: false
-    channel: rc
-  - name: github.com/getoutreach/devbase
-    prerelease: false
-    channel: rc
 arguments:
   ciOptions:
     skipDocker: true
+  confluenceSpaceKey: DT
   description: |
     This is a collection of actions that are used by Outreach.
   lifecycle: public_ga
   lintroller: platinum
   metrics: datadog
-  opslevel:
-    confluenceSpaceKey: DT
   oss: true
   reportingTeam: fnd-dt
   tier: 2
   tracing: opentelemetry
+modules:
+  - name: github.com/getoutreach/devbase
+    channel: rc
+  - name: github.com/getoutreach/stencil-base
+    channel: rc
+  - name: github.com/getoutreach/stencil-golang
+    channel: rc
+  - name: github.com/getoutreach/stencil-circleci
+    channel: rc
+  - name: github.com/getoutreach/stencil-actions
+    channel: rc
+  - name: github.com/getoutreach/stencil-discovery
+    channel: rc
