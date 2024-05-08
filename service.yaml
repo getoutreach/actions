@@ -1,4 +1,23 @@
 name: actions
+modules:
+  - name: github.com/getoutreach/stencil-base
+    prerelease: false
+    channel: rc
+  - name: github.com/getoutreach/stencil-golang
+    prerelease: false
+    channel: rc
+  - name: github.com/getoutreach/stencil-circleci
+    prerelease: false
+    channel: rc
+  - name: github.com/getoutreach/stencil-actions
+    prerelease: false
+    channel: rc
+  - name: github.com/getoutreach/stencil-discovery
+    prerelease: false
+    channel: rc
+  - name: github.com/getoutreach/devbase
+    prerelease: false
+    channel: rc
 arguments:
   ciOptions:
     skipDocker: true
@@ -8,14 +27,8 @@ arguments:
   lintroller: platinum
   metrics: datadog
   opslevel:
-    confluenceSpaceKey: "DT"
+    confluenceSpaceKey: DT
   oss: true
   reportingTeam: fnd-dt
   tier: 2
   tracing: opentelemetry
-modules:
-  - name: github.com/getoutreach/stencil-base
-  - name: github.com/getoutreach/stencil-golang
-  - name: github.com/getoutreach/stencil-circleci
-  - name: github.com/getoutreach/stencil-actions
-  - name: github.com/getoutreach/stencil-discovery
