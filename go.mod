@@ -7,7 +7,7 @@ toolchain go1.22.6
 require (
 	github.com/bradleyfalzon/ghinstallation/v2 v2.11.0
 	github.com/getoutreach/goql v1.12.0
-	github.com/sethvargo/go-githubactions v1.2.0
+	github.com/sethvargo/go-githubactions v1.3.0
 	github.com/slack-go/slack v0.14.0
 	github.com/stretchr/testify v1.9.0
 )
