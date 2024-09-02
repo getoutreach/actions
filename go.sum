@@ -5,8 +5,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/getoutreach/gobox v1.90.2 h1:dRkIgououFs1rwrdT1pvD8OrHa9q6ufvKSYtsH2L2Kw=
 github.com/getoutreach/gobox v1.90.2/go.mod h1:xo3vkzGCj/Lp3KcfIWP9XT4rqFJjJT9cSWcOEiK1Lzk=
-github.com/getoutreach/goql v1.12.0 h1:ZI/488vmC0ooZS22+Ymya5dRKyvEhyLMTX3T9lX3LeM=
-github.com/getoutreach/goql v1.12.0/go.mod h1:ooI2AjuC1xZiGh8546eXkDgqED54UHQ0qZlLAIqdj6Q=
+github.com/getoutreach/goql v1.13.0 h1:H50XF8YYvioGysg2G17V7w4adx0a59gLX5AcXl5WPp0=
+github.com/getoutreach/goql v1.13.0/go.mod h1:JiQsXX23l6tr03G9BX8B2qHlPocalnigrYad1EancEM=
 github.com/go-test/deep v1.0.4 h1:u2CU3YKy9I2pmu9pX0eq50wCgjfGIt539SqR7FbHiho=
 github.com/go-test/deep v1.0.4/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/golang-jwt/jwt/v4 v4.5.0 h1:7cYmW1XlMY7h7ii7UhUyChSgS5wUJEnm9uZVTGqOWzg=
