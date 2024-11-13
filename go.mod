@@ -5,7 +5,7 @@ go 1.22
 toolchain go1.22.6
 
 require (
-	github.com/bradleyfalzon/ghinstallation/v2 v2.11.0
+	github.com/bradleyfalzon/ghinstallation/v2 v2.12.0
 	github.com/getoutreach/goql v1.13.0
 	github.com/sethvargo/go-githubactions v1.3.0
 	github.com/slack-go/slack v0.15.0
@@ -16,8 +16,8 @@ require github.com/getoutreach/gobox v1.90.2 // indirect
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
-	github.com/google/go-github/v62 v62.0.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
+	github.com/google/go-github/v66 v66.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
