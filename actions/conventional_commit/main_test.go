@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/google/go-github/v43/github"
-	"github.com/stretchr/testify/assert"
+	"gotest.tools/v3/assert"
 )
 
 func Test_allowBypass(t *testing.T) {
@@ -143,9 +143,9 @@ func Test_validateCommitMessage(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := validateCommitMessage(tt.args.commitMessage)
 			if tt.errMsg != "" {
-				assert.EqualError(t, err, tt.errMsg)
+				assert.Error(t, err, tt.errMsg)
 			} else {
-				assert.Nil(t, err)
+				assert.NilError(t, err)
 			}
 		})
 	}
