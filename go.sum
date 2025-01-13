@@ -2,8 +2,8 @@ github.com/bradleyfalzon/ghinstallation/v2 v2.12.0 h1:k8oVjGhZel2qmCUsYwSE34jPNT
 github.com/bradleyfalzon/ghinstallation/v2 v2.12.0/go.mod h1:V4gJcNyAftH0rXpRp1SUVUuh+ACxOH1xOk/ZzkRHltg=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/getoutreach/gobox v1.90.2 h1:dRkIgououFs1rwrdT1pvD8OrHa9q6ufvKSYtsH2L2Kw=
-github.com/getoutreach/gobox v1.90.2/go.mod h1:xo3vkzGCj/Lp3KcfIWP9XT4rqFJjJT9cSWcOEiK1Lzk=
+github.com/getoutreach/gobox v1.102.1 h1:7r5Nlkqm+PMYtU3iddC1D4LDSbLLOA4qVig3NdaQ4KI=
+github.com/getoutreach/gobox v1.102.1/go.mod h1:U2WtTzoEWXKJJiMHiWgXLgR/RrAj8SShwmbzxlfoVvs=
 github.com/getoutreach/goql v1.13.0 h1:H50XF8YYvioGysg2G17V7w4adx0a59gLX5AcXl5WPp0=
 github.com/getoutreach/goql v1.13.0/go.mod h1:JiQsXX23l6tr03G9BX8B2qHlPocalnigrYad1EancEM=
 github.com/go-test/deep v1.0.4 h1:u2CU3YKy9I2pmu9pX0eq50wCgjfGIt539SqR7FbHiho=
@@ -33,8 +33,8 @@ github.com/slack-go/slack v0.15.0/go.mod h1:hlGi5oXA+Gt+yWTPP0plCdRKmjsDxecdHxYQ
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-golang.org/x/crypto v0.23.0 h1:dIJU/v2J8Mdglj/8rJ6UUOM3Zc9zLZxVZwwxMooUSAI=
-golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
+golang.org/x/crypto v0.31.0 h1:ihbySMvVjLAeSH1IbfcRTkD/iNscyz8rGzjF/E5hV6U=
+golang.org/x/crypto v0.31.0/go.mod h1:kDsLvtWBEx7MV9tJOj9bnXsPbxwJQ6csT/x4KIN4Ssk=
 golang.org/x/oauth2 v0.24.0 h1:KTBBxWqUa0ykRPLtV69rRto9TLXcqYkeswu48x/gvNE=
 golang.org/x/oauth2 v0.24.0/go.mod h1:XYTD2NtWslqkgxebSiOHnXEap4TF09sJSc7H1sXbhtI=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
