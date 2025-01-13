@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/google/go-github/v43/github"
+	"github.com/google/go-github/v68/github"
 	"gotest.tools/v3/assert"
 )
 
@@ -26,10 +26,10 @@ func Test_allowBypass(t *testing.T) {
 				commit: &github.RepositoryCommit{
 					Commit: &github.Commit{
 						Author: &github.CommitAuthor{
-							Email: github.String("49699333+dependabot[bot]@users.noreply.github.com"),
+							Email: github.Ptr("49699333+dependabot[bot]@users.noreply.github.com"),
 						},
 						Verification: &github.SignatureVerification{
-							Verified: github.Bool(true),
+							Verified: github.Ptr(true),
 						},
 					},
 				},
@@ -42,10 +42,10 @@ func Test_allowBypass(t *testing.T) {
 				commit: &github.RepositoryCommit{
 					Commit: &github.Commit{
 						Author: &github.CommitAuthor{
-							Email: github.String("jaredallard@users.noreply.github.com"),
+							Email: github.Ptr("jaredallard@users.noreply.github.com"),
 						},
 						Verification: &github.SignatureVerification{
-							Verified: github.Bool(true),
+							Verified: github.Ptr(true),
 						},
 					},
 				},
@@ -57,12 +57,12 @@ func Test_allowBypass(t *testing.T) {
 			args: args{
 				commit: &github.RepositoryCommit{
 					Commit: &github.Commit{
-						SHA: github.String("1234"),
+						SHA: github.Ptr("1234"),
 						Author: &github.CommitAuthor{
-							Email: github.String("49699333+dependabot[bot]@users.noreply.github.com"),
+							Email: github.Ptr("49699333+dependabot[bot]@users.noreply.github.com"),
 						},
 						Verification: &github.SignatureVerification{
-							Verified: github.Bool(false),
+							Verified: github.Ptr(false),
 						},
 					},
 				},
@@ -75,10 +75,10 @@ func Test_allowBypass(t *testing.T) {
 				commit: &github.RepositoryCommit{
 					Commit: &github.Commit{
 						Author: &github.CommitAuthor{
-							Email: github.String("jaredallard@users.noreply.github.com"),
+							Email: github.Ptr("jaredallard@users.noreply.github.com"),
 						},
 						Verification: &github.SignatureVerification{
-							Verified: github.Bool(true),
+							Verified: github.Ptr(true),
 						},
 					},
 				},

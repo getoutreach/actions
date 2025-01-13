@@ -13,7 +13,7 @@ import (
 
 	"github.com/getoutreach/actions/pkg/gh"
 	"github.com/getoutreach/actions/pkg/slack"
-	"github.com/google/go-github/v43/github"
+	"github.com/google/go-github/v68/github"
 	"github.com/pkg/errors"
 	actions "github.com/sethvargo/go-githubactions"
 	_slack "github.com/slack-go/slack"
