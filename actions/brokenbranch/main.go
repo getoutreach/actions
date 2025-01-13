@@ -70,7 +70,7 @@ func main() {
 	}
 
 	if err := RunAction(ctx, client, ghContext); err != nil {
-		actions.Errorf(err.Error())
+		actions.Errorf("%s", err.Error())
 		return
 	}
 	exitCode = 0
@@ -168,7 +168,7 @@ func RunAction(ctx context.Context, _ *github.Client, actionCtx *actions.GitHubC
 	if dmCommitterErr != nil {
 		// append to channel message
 		appendToChannelMessage = fmt.Sprintf(`
-		
+
 :warning: *Was unable to DM the committer* due to error: %s`, dmCommitterErr.Error())
 	}
 

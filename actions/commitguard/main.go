@@ -64,7 +64,7 @@ func main() {
 	}
 
 	if err := RunAction(ctx, client, ghContext); err != nil {
-		actions.Errorf(err.Error())
+		actions.Errorf("%s", err.Error())
 		return
 	}
 	exitCode = 0
