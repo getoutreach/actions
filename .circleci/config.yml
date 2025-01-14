@@ -2,7 +2,7 @@
 # syntax, such as anchors, will be fixed automatically.
 version: 2.1
 orbs:
-  shared: getoutreach/shared@dev:2.28.2-rc.2
+  shared: getoutreach/shared@dev:2.29.0-rc.8
   queue: eddiewebb/queue@2.2.1
   ## <<Stencil::Block(CircleCIExtraOrbs)>>
 
@@ -20,6 +20,7 @@ parameters:
 contexts: &contexts
   - aws-credentials
   - npm-credentials
+  - box
   - vault-dev
   - confluence
   - circleci-credentials
@@ -43,6 +44,10 @@ test: &test
 # Branches used for releasing code, pre-release or not
 release_branches: &release_branches
   - "main"
+
+## <<Stencil::Block(circleAnchorExtra)>>
+
+## <</Stencil::Block>>
 
 jobs:
   {}

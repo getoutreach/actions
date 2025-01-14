@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/getoutreach/actions/pkg/gh"
-	"github.com/google/go-github/v43/github"
+	"github.com/google/go-github/v68/github"
 	"github.com/pkg/errors"
 	actions "github.com/sethvargo/go-githubactions"
 )
@@ -64,7 +64,7 @@ func main() {
 	}
 
 	if err := RunAction(ctx, client, ghContext); err != nil {
-		actions.Errorf(err.Error())
+		actions.Errorf("%s", err.Error())
 		return
 	}
 	exitCode = 0

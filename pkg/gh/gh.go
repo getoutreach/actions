@@ -15,7 +15,7 @@ import (
 	"strings"
 
 	"github.com/bradleyfalzon/ghinstallation/v2"
-	"github.com/google/go-github/v43/github"
+	"github.com/google/go-github/v68/github"
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
 )

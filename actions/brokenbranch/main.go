@@ -13,7 +13,7 @@ import (
 
 	"github.com/getoutreach/actions/pkg/gh"
 	"github.com/getoutreach/actions/pkg/slack"
-	"github.com/google/go-github/v43/github"
+	"github.com/google/go-github/v68/github"
 	"github.com/pkg/errors"
 	actions "github.com/sethvargo/go-githubactions"
 	_slack "github.com/slack-go/slack"
@@ -70,7 +70,7 @@ func main() {
 	}
 
 	if err := RunAction(ctx, client, ghContext); err != nil {
-		actions.Errorf(err.Error())
+		actions.Errorf("%s", err.Error())
 		return
 	}
 	exitCode = 0
@@ -168,7 +168,7 @@ func RunAction(ctx context.Context, _ *github.Client, actionCtx *actions.GitHubC
 	if dmCommitterErr != nil {
 		// append to channel message
 		appendToChannelMessage = fmt.Sprintf(`
-		
+
 :warning: *Was unable to DM the committer* due to error: %s`, dmCommitterErr.Error())
 	}
 
