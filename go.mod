@@ -12,7 +12,7 @@ require (
 	github.com/sethvargo/go-githubactions v1.3.0
 	github.com/slack-go/slack v0.15.0
 	golang.org/x/oauth2 v0.25.0
-	gotest.tools/v3 v3.5.1
+	gotest.tools/v3 v3.5.2
 )
 
 require (
