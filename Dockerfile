@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.0-experimental
 
-FROM gcr.io/outreach-docker/golang:1.19 as builder
+FROM gcr.io/outreach-docker/golang:1.23.4 as builder
 
 ARG ACTION
 
@@ -26,7 +26,7 @@ RUN --mount=type=ssh --mount=type=cache,target=/go/pkg --mount=type=cache,target
     mkdir -p bin; \
     go build -v -o /src/bin/ ./cmd/...
 
-FROM gcr.io/outreach-docker/alpine:3.16
+FROM gcr.io/outreach-docker/alpine:3.18
 ENTRYPOINT ["/usr/local/bin/action"]
 LABEL "io.outreach.reporting_team"="fnd-dt"
 LABEL "io.outreach.repo"="actions"
