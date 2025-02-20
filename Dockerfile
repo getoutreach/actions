@@ -13,7 +13,7 @@ WORKDIR /src
 # Copy our source code, go module information, and the files necessary
 # to run make comands into the builder directory.
 COPY actions/${ACTION}/ ./cmd/action/
-COPY go.mod go.sum Makefile bootstrap.lock ./
+COPY go.mod go.sum Makefile stencil.lock ./
 COPY scripts/ ./scripts/
 COPY pkg/ ./pkg/
 
