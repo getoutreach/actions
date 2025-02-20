@@ -4,8 +4,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/getoutreach/gobox v1.102.1 h1:7r5Nlkqm+PMYtU3iddC1D4LDSbLLOA4qVig3NdaQ4KI=
 github.com/getoutreach/gobox v1.102.1/go.mod h1:U2WtTzoEWXKJJiMHiWgXLgR/RrAj8SShwmbzxlfoVvs=
-github.com/getoutreach/goql v1.13.1 h1:rzUfPago9MurYVsJPUYLkhfInLgGRyV1nMBGRY4u4aI=
-github.com/getoutreach/goql v1.13.1/go.mod h1:JiQsXX23l6tr03G9BX8B2qHlPocalnigrYad1EancEM=
+github.com/getoutreach/goql v1.13.2 h1:h1bfL614BXo7wN6lYEAWzm4zoF3MTkBma1ke/t5Y2mE=
+github.com/getoutreach/goql v1.13.2/go.mod h1:D+VqEEfIJvBMxx+UGjKuAj5gVTraEOJMLit9FXB7cNc=
 github.com/go-test/deep v1.0.4 h1:u2CU3YKy9I2pmu9pX0eq50wCgjfGIt539SqR7FbHiho=
 github.com/go-test/deep v1.0.4/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/golang-jwt/jwt/v4 v4.5.1 h1:JdqV9zKUdtaa9gdPlywC3aeoEsR681PlKC+4F5gQgeo=
@@ -23,8 +23,9 @@ github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aN
 github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
-github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
+github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sethvargo/go-githubactions v1.3.0 h1:Kg633LIUV2IrJsqy2MfveiED/Ouo+H2P0itWS0eLh8A=
 github.com/sethvargo/go-githubactions v1.3.0/go.mod h1:7/4WeHgYfSz9U5vwuToCK9KPnELVHAhGtRwLREOQV80=
 github.com/slack-go/slack v0.16.0 h1:khp/WCFv+Hb/B/AJaAwvcxKun0hM6grN0bUZ8xG60P8=
