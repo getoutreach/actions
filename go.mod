@@ -16,7 +16,12 @@ require (
 )
 
 require (
-	github.com/getoutreach/gobox v1.102.1 // indirect
+	go.opentelemetry.io/otel v1.29.0 // indirect
+	go.opentelemetry.io/otel/trace v1.29.0 // indirect
+)
+
+require (
+	github.com/getoutreach/gobox v1.104.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
