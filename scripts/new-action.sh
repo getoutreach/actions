@@ -40,8 +40,6 @@ name: $newAction
 on:
   workflow_call:
     secrets:
-      OUTREACH_DOCKER_JSON:
-        required: true
       PAT_OUTREACH_CI:
         required: false
     inputs:
@@ -58,9 +56,6 @@ jobs:
       env:
         GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: \${{ secrets.PAT_OUTREACH_CI }}
-      credentials:
-        username: _json_key
-        password: \${{ secrets.OUTREACH_DOCKER_JSON }}
     steps:
       - run: /usr/local/bin/action
 
