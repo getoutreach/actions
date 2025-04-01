@@ -36,4 +36,6 @@ COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /zoneinfo.zip
 ENV ZONEINFO=/zoneinfo.zip
 
 COPY --from=builder /src/bin/action /usr/local/bin/action
+
+RUN adduser -D systemuser
 USER systemuser
