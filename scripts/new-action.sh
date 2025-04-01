@@ -6,7 +6,7 @@ if [[ ! -d actions ]]; then
 fi
 
 if [[ $# -ne 1 ]]; then
-  echo "Name of action must be passed to script (if you're using make do \"make new-action name=<name>\")." >&2
+  echo "Nameof action must be passed to script (if you're using make do \"make new-action name=<name>\")." >&2
   exit 1
 fi
 newAction="$1"
@@ -54,7 +54,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     container:
-      image: gcr.io/outreach-docker/actions/$newAction:\${{ inputs.image_tag }}
+      image: ghcr.io/getoutreach/action-$newAction:\${{ inputs.image_tag }}
       env:
         GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: \${{ secrets.PAT_OUTREACH_CI }}

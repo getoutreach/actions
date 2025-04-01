@@ -23,10 +23,12 @@ if [[ "$(yq -rc "any(.actions[] == \"$action\"; .)" actions.yaml)" == "false" ]]
   exit 1
 fi
 
-echo " -> Building local docker image (gcr.io/outreach-docker/actions/$action:local)"
+image_url="ghcr.io/getoutreach/action-$action"
+
+echo " -> Building local docker image ($image_url:local)"
 
 docker buildx build --platform "linux/amd64" \
-  --ssh default -t "gcr.io/outreach-docker/actions/$action:local" \
+  --ssh default -t "$image_url:local" \
   --build-arg ACTION="$action" --load .
 
 act_args=(

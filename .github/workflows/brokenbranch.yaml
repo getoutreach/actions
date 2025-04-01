@@ -49,7 +49,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     container:
-      image: gcr.io/outreach-docker/actions/brokenbranch:${{ inputs.image_tag }}
+      image: ghcr.io/getoutreach/action-brokenbranch:${{ inputs.image_tag }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
