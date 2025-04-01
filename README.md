@@ -73,8 +73,6 @@ jobs:
   conventional_commit:
     name: Conventional Commit
     uses: getoutreach/actions/.github/workflows/conventional_commit.yaml@main
-    secrets:
-      OUTREACH_DOCKER_JSON: ${{ secrets.OUTREACH_DOCKER_JSON }}
 ```
 
 This file would be placed in `.github/workflows/pull-request-shared-actions.yaml`. To
