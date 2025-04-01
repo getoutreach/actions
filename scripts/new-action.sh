@@ -75,7 +75,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     container:
-      image: gcr.io/outreach-docker/actions/$newAction:local
+      image: ghcr.io/getoutreach/action-$newAction:local
       env:
         GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: \${{ secrets.GITHUB_TOKEN }}
