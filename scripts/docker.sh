@@ -12,6 +12,8 @@
 # "development" if running in dry-run mode and we take advantage of the fact that the
 # entirety of the current branch is squashed into the HEAD commit.
 
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
 if [[ -z $APP_VERSION ]]; then
   echo "APP_VERSION must be passed to script." >&2
   exit 1
@@ -22,23 +24,9 @@ if [[ ! -f "actions.yaml" ]]; then
   exit 1
 fi
 
-# This is just to authenticate gcloud in CI, but we can't use the $CI variable because
-# it's unset by the releasing script.
-if [[ -z $GOOGLE_SERVICE_ACCOUNT ]]; then
-  # You have to write this to a file to authenticate gcloud service accounts, can't
-  # read it from stdin like you can with docker auth (it is deleted right after auth).
-  echo "$GCLOUD_SERVICE_ACCOUNT" >gcloud-auth-key.json
-
-  gcloud auth activate-service-account \
-    circleci-rw@outreach-docker.iam.gserviceaccount.com \
-    --key-file=gcloud-auth-key.json
-
-  rm -f gcloud-auth-key.json
-fi
-
 # Wrapper around gojq to make it easier to use with yaml files.
 yamlq() {
-  gojq --yaml-input --raw-output --compact-output "$@"
+  "$DIR"/shell-wrapper.sh yq.sh --raw-output --compact-output "$@"
 }
 
 actions_to_build=()
