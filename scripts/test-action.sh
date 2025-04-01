@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
 if [[ ! -d actions ]]; then
   echo "Script needs to be ran from the root of the repository." >&2
   exit 1
@@ -18,7 +20,7 @@ if [[ $# -eq 1 ]]; then
   echo " -> Custom payload \"$payload\" requested"
 fi
 
-if [[ "$(yq -rc "any(.actions[] == \"$action\"; .)" actions.yaml)" == "false" ]]; then
+if [[ "$("$DIR"/shell-wrapper.sh yq.sh --raw-output --compact-output "any(.actions[] == \"$action\"; .)" actions.yaml)" == "false" ]]; then
   echo "Action set to be tested (\"$action\") does not exist." >&2
   exit 1
 fi

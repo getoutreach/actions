@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
 if [[ ! -d actions ]]; then
   echo "Script needs to be ran from the root of the repository." >&2
   exit 1
@@ -23,7 +27,7 @@ if [[ $newAction =~ [[:space:]] ]]; then
   exit 1
 fi
 
-yq -rc '.actions[]' actions.yaml | while read -r action; do
+"$DIR"/shell-wrapper.sh yq.sh '.actions[]' actions.yaml | while read -r action; do
   if [[ $action == "$newAction" ]]; then
     echo "Action named \"$action\" already exists." >&2
     exit 1
@@ -132,5 +136,6 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 EOF
 
-yq -yi '.actions += ["'"$newAction"'"]' actions.yaml
+./scripts/shell-wrapper.sh yq.sh --yaml-output '.actions += ["'"$newAction"'"]' actions.yaml >actions.yaml.new
+mv actions.yaml.new actions.yaml
 make fmt
