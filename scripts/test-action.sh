@@ -69,4 +69,4 @@ fi
 echo " -> Using payload \"$payload\" for detected event trigger"
 echo " -> Running local test for \"$action\""
 
-./scripts/shell-wrapper.sh gobin.sh github.com/nektos/act@v0.2.26 "${act_args[@]}" "$on"
+mise exec -- act "${act_args[@]}" "$on"
