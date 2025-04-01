@@ -22,7 +22,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     container:
-      image: gcr.io/outreach-docker/actions/conventional_commit:${{ inputs.image_tag }}
+      image: ghcr.io/getoutreach/action-conventional_commit:${{ inputs.image_tag }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}

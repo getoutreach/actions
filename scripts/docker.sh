@@ -36,6 +36,11 @@ if [[ -z $GOOGLE_SERVICE_ACCOUNT ]]; then
   rm -f gcloud-auth-key.json
 fi
 
+# Wrapper around gojq to make it easier to use with yaml files.
+yamlq() {
+  gojq --yaml-input --raw-output --compact-output "$@"
+}
+
 actions_to_build=()
 if [[ $APP_VERSION == "development" ]]; then
   # Figure out which actions have changed.
@@ -46,7 +51,7 @@ if [[ $APP_VERSION == "development" ]]; then
   fi
 else
   # Build and push all docker images for each action.
-  mapfile -t actions_to_build <<<"$(yq -rc '.actions[]' actions.yaml)"
+  mapfile -t actions_to_build <<<"$(yamlq '.actions[]' actions.yaml)"
 fi
 
 if [[ ${#actions_to_build[@]} -eq 0 ]]; then
@@ -65,21 +70,22 @@ default_build_args=(
   --push
 )
 
-yq -rc '.actions[]' actions.yaml | while read -r action; do
+yamlq '.actions[]' actions.yaml | while read -r action; do
+  image_url="ghcr.io/getoutreach/action-$action"
   for action_to_build in "${actions_to_build[@]}"; do
     if [ "$action_to_build" == "$action" ]; then
       # Action actually exists in yaml list of created actions.
 
       if [[ $APP_VERSION == "development" ]]; then
         # Before we push another development tag for each action, we should delete the old one if it exists.
-        if [[ $(gcloud container images list-tags gcr.io/outreach-docker/actions/"$action" | grep -c development) -gt 0 ]]; then
+        if [[ $(gcloud container images list-tags "$image_url" | grep -c development) -gt 0 ]]; then
           # If we're in this conditional it means a development image already exists, but we can't just blindly
           # delete it before making sure it doesn't have any other tags attached to it.
-          if [[ $(gcloud container images list-tags gcr.io/outreach-docker/actions/"action" | grep development | awk '{print $2}' | awk -F , '{ for (i = 1; i <= NF; i++) print $i }' | wc -l) -eq 1 ]]; then
+          if [[ $(gcloud container images list-tags "$image_url" | grep development | awk '{print $2}' | awk -F , '{ for (i = 1; i <= NF; i++) print $i }' | wc -l) -eq 1 ]]; then
             # If we're in this conditional it means that the development image only had the development tag on it, so
             # we're safe to delete it.
             echo " -> Found old development image for $action@$APP_VERSION, deleting before pushing new one"
-            gcloud container images delete --force-delete-tags --quiet gcr.io/outreach-docker/actions/"$action":development
+            gcloud container images delete --force-delete-tags --quiet "$image_url":development
           fi
         fi
       fi
@@ -89,13 +95,13 @@ yq -rc '.actions[]' actions.yaml | while read -r action; do
       build_args=("${default_build_args[@]}")
       build_args+=(
         --build-arg ACTION="$action"
-        -t "gcr.io/outreach-docker/actions/$action:$APP_VERSION"
+        -t "$image_url:$APP_VERSION"
       )
 
       if [[ $APP_VERSION != "development" ]]; then
         # If we're building images from the "release" branch, tag all images with latest.
         build_args+=(
-          -t "gcr.io/outreach-docker/actions/$action:latest"
+          -t "$image_url:latest"
         )
       fi
 
