@@ -99,8 +99,7 @@ workflows:
           context: *contexts
           ## <<Stencil::Block(circleReleaseExtra)>>
           machine: true
-          executor_name:
-            name: testbed-machine
+          executor: shared/testbed-machine
           resource_class: large
 
           ## <</Stencil::Block>>
