@@ -15,4 +15,5 @@ test-action:
 
 post-stencil::
 	./scripts/shell-wrapper.sh catalog-sync.sh
+	./scripts/sync-go-version.sh
 ## <</Stencil::Block>>
