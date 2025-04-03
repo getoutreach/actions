@@ -2,7 +2,7 @@
 # syntax, such as anchors, will be fixed automatically.
 version: 2.1
 orbs:
-  shared: getoutreach/shared@dev:2.31.0-rc.1
+  shared: getoutreach/shared@dev:first
   queue: eddiewebb/queue@2.2.1
   ## <<Stencil::Block(CircleCIExtraOrbs)>>
 
@@ -100,7 +100,7 @@ workflows:
           ## <<Stencil::Block(circleReleaseExtra)>>
           machine: true
           executor_name:
-            name: shared/testbed-machine
+            name: testbed-machine
           resource_class: large
 
           ## <</Stencil::Block>>
