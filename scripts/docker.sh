@@ -13,6 +13,7 @@
 # entirety of the current branch is squashed into the HEAD commit.
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+DEVBASE_LIB_DIR="$DIR/../.bootstrap/shell/lib"
 
 if [[ -z $APP_VERSION ]]; then
   echo "APP_VERSION must be passed to script." >&2
@@ -24,10 +25,15 @@ if [[ ! -f "actions.yaml" ]]; then
   exit 1
 fi
 
+# shellcheck source=../.bootstrap/shell/lib/box.sh
+source"$DEVBASE_LIB_DIR"/box.sh
+
 # Wrapper around gojq to make it easier to use with yaml files.
 yamlq() {
   "$DIR"/shell-wrapper.sh yq.sh --raw-output --compact-output "$@"
 }
+
+GITHUB_ORG="${GITHUB_ORG:-$(get_box_field org)}"
 
 actions_to_build=()
 if [[ $APP_VERSION == "development" ]]; then
@@ -59,26 +65,23 @@ default_build_args=(
 )
 
 yamlq '.actions[]' actions.yaml | while read -r action; do
-  image_url="ghcr.io/getoutreach/action-$action"
+  image_name="action-$action"
+  image_url="ghcr.io/$GITHUB_ORG/$image_name"
   for action_to_build in "${actions_to_build[@]}"; do
     if [ "$action_to_build" == "$action" ]; then
       # Action actually exists in yaml list of created actions.
 
       if [[ $APP_VERSION == "development" ]]; then
-        # Before we push another development tag for each action, we should delete the old one if it exists.
-        if [[ $(gcloud container images list-tags "$image_url" | grep -c development) -gt 0 ]]; then
-          # If we're in this conditional it means a development image already exists, but we can't just blindly
-          # delete it before making sure it doesn't have any other tags attached to it.
-          if [[ $(gcloud container images list-tags "$image_url" | grep development | awk '{print $2}' | awk -F , '{ for (i = 1; i <= NF; i++) print $i }' | wc -l) -eq 1 ]]; then
-            # If we're in this conditional it means that the development image only had the development tag on it, so
-            # we're safe to delete it.
-            echo " -> Found old development image for $action@$APP_VERSION, deleting before pushing new one"
-            gcloud container images delete --force-delete-tags --quiet "$image_url":development
-          fi
+        # Before we push another development tag for each action, we should delete any other images with that tag.
+        dev_version_ids="$(gh api /orgs/$GITHUB_ORG/packages/container/$image_name/versions --jq '.[] | select(.metadata.container.tags | any(. == "development")) | .id')"
+        if [[ -n $dev_version_ids ]]; then
+          for version_id in $dev_version_ids; do
+            gh api -X DELETE "/orgs/$GITHUB_ORG/packages/container/$image_name/versions/$version_id"
+          done
         fi
       fi
 
-      echo " -> Building and pushing docker image for $action@$APP_VERSION"
+      echo " -> Building and pushing Docker image for $action@$APP_VERSION"
 
       build_args=("${default_build_args[@]}")
       build_args+=(
