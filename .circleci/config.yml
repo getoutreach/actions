@@ -35,8 +35,6 @@ contexts: &contexts
 test: &test
   context: *contexts
   app_name: actions
-  docker_image: 182192988802.dkr.ecr.us-east-2.amazonaws.com/outreach-docker/bootstrap/ci-slim
-  executor_name: testbed-docker-aws
   ### Start parameters inserted by other modules
   ### End parameters inserted by other modules
   ## <<Stencil::Block(circleTestExtra)>>
@@ -136,8 +134,6 @@ workflows:
           ## <</Stencil::Block>>
       - shared/publish_docs:
           context: *contexts
-          docker_image: 182192988802.dkr.ecr.us-east-2.amazonaws.com/outreach-docker/bootstrap/ci-slim
-          executor_name: testbed-docker-aws
           filters:
             branches:
               only:
