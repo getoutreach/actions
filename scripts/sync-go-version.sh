@@ -10,7 +10,7 @@ linux*)
   sed -i -e "$sedExpr" Dockerfile
   ;;
 darwin*)
-  sed -i '' Dockerfile
+  sed -i '' -e "$sedExpr" Dockerfile
   ;;
 *)
   echo "Unsupported OS" >&2
