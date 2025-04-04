@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
 # It's important to note that all of this script relies on heavy assumptions on how
 # it's called. Right now that currently means it's called in CI by either the
 # shell/ci/release/dryrun.sh or shell/ci/release/release.sh scripts in devbase and
@@ -15,18 +17,19 @@
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 DEVBASE_LIB_DIR="$DIR/../.bootstrap/shell/lib"
 
+# shellcheck source=../.bootstrap/shell/lib/box.sh
+source "$DEVBASE_LIB_DIR"/box.sh
+
+# shellcheck source=../.bootstrap/shell/lib/logging.sh
+source "$DEVBASE_LIB_DIR"/logging.sh
+
 if [[ -z $APP_VERSION ]]; then
-  echo "APP_VERSION must be passed to script." >&2
-  exit 1
+  fatal "APP_VERSION must be passed to script."
 fi
 
 if [[ ! -f "actions.yaml" ]]; then
-  echo "Script must be ran in root of repository (actions.yaml needs to exist)." >&2
-  exit 1
+  fatal "Script must be ran in root of repository (actions.yaml needs to exist)."
 fi
-
-# shellcheck source=../.bootstrap/shell/lib/box.sh
-source"$DEVBASE_LIB_DIR"/box.sh
 
 # Wrapper around gojq to make it easier to use with yaml files.
 yamlq() {
@@ -50,11 +53,10 @@ fi
 
 if [[ ${#actions_to_build[@]} -eq 0 ]]; then
   if [[ $APP_VERSION != "development" ]]; then
-    echo "No actions were detected to be built, but we're on the main branch so this is a problem." >&2
-    exit 1
+    fatal "No actions were detected to be built, but we're on the main branch so this is a problem."
   fi
 
-  echo "No actions to build, skipping."
+  info "No actions to build, skipping."
   exit 0
 fi
 
@@ -74,14 +76,15 @@ yamlq '.actions[]' actions.yaml | while read -r action; do
       if [[ $APP_VERSION == "development" ]]; then
         # Before we push another development tag for each action, we should delete any other images with that tag.
         dev_version_ids="$(gh api /orgs/$GITHUB_ORG/packages/container/$image_name/versions --jq '.[] | select(.metadata.container.tags | any(. == "development")) | .id')"
-        if [[ -n $dev_version_ids ]]; then
+        if [[ "$dev_version_ids" =~ ^[[:digit:][:space:]]+$ ]]; then
+          info_sub "Deleting old development images for $image_name: $dev_version_ids"
           for version_id in $dev_version_ids; do
             gh api -X DELETE "/orgs/$GITHUB_ORG/packages/container/$image_name/versions/$version_id"
           done
         fi
       fi
 
-      echo " -> Building and pushing Docker image for $action@$APP_VERSION"
+      info_sub "Building and pushing Docker image for $action@$APP_VERSION"
 
       build_args=("${default_build_args[@]}")
       build_args+=(
