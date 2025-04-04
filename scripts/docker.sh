@@ -75,7 +75,7 @@ yamlq '.actions[]' actions.yaml | while read -r action; do
 
       if [[ $APP_VERSION == "development" ]]; then
         # Before we push another development tag for each action, we should delete any other images with that tag.
-        dev_version_ids="$(gh api /orgs/$GITHUB_ORG/packages/container/$image_name/versions --jq '.[] | select(.metadata.container.tags | any(. == "development")) | .id')"
+        dev_version_ids="$(gh api /orgs/"$GITHUB_ORG"/packages/container/"$image_name"/versions --jq '.[] | select(.metadata.container.tags | any(. == "development")) | .id')"
         if [[ $dev_version_ids =~ ^[[:digit:][:space:]]+$ ]]; then
           info_sub "Deleting old development images for $image_name: $dev_version_ids"
           for version_id in $dev_version_ids; do
