@@ -34,7 +34,10 @@ does a few things:
 - Adds an entry to the `actions` list in `actions.yaml`.
 - Creates a reusable (from other repositories) workflow file in `.github/workflows/`
 - Creates a test workflow file in `test/`
-- Creates a directory to define the action with boilerplate go code in `actions/`
+- Creates a directory to define the action with boilerplate Go code in `actions/`
+
+When the action image is created in GHCR, make sure that you set it from "Internal" to
+"Public", and that the admin of the container is the same squad as the owner of this repo.
 
 ### Testing an Action
 
