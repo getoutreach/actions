@@ -14,11 +14,14 @@ set -eo pipefail
 # "development" if running in dry-run mode and we take advantage of the fact that the
 # entirety of the current branch is squashed into the HEAD commit.
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-DEVBASE_LIB_DIR="$DIR/../.bootstrap/shell/lib"
+REPO_SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+DEVBASE_LIB_DIR="$REPO_SCRIPTS_DIR/../.bootstrap/shell/lib"
 
 # shellcheck source=../.bootstrap/shell/lib/box.sh
 source "$DEVBASE_LIB_DIR"/box.sh
+
+# shellcheck source=../.bootstrap/shell/lib/docker.sh
+source "$DEVBASE_LIB_DIR"/docker.sh
 
 # shellcheck source=../.bootstrap/shell/lib/logging.sh
 source "$DEVBASE_LIB_DIR"/logging.sh
@@ -33,7 +36,7 @@ fi
 
 # Wrapper around gojq to make it easier to use with yaml files.
 yamlq() {
-  "$DIR"/shell-wrapper.sh yq.sh --raw-output --compact-output "$@"
+  "$REPO_SCRIPTS_DIR"/shell-wrapper.sh yq.sh --raw-output --compact-output "$@"
 }
 
 GITHUB_ORG="${GITHUB_ORG:-$(get_box_field org)}"
@@ -67,38 +70,36 @@ default_build_args=(
 )
 
 yamlq '.actions[]' actions.yaml | while read -r action; do
-  image_name="action-$action"
-  image_url="ghcr.io/$GITHUB_ORG/$image_name"
+  ghcr_image_name="action-$action"
+  ghcr_image_url="ghcr.io/$GITHUB_ORG/$ghcr_image_name"
+  push_registries="$(get_docker_push_registries)"
   for action_to_build in "${actions_to_build[@]}"; do
     if [ "$action_to_build" == "$action" ]; then
       # Action actually exists in yaml list of created actions.
-
-      if [[ $APP_VERSION == "development" ]]; then
-        if gh api --silent "/orgs/$GITHUB_ORG/packages/container/$image_name" 2>/dev/null; then
-          # Before we push another development tag for each action, we should delete any other images with that tag.
-          dev_version_ids="$(gh api /orgs/"$GITHUB_ORG"/packages/container/"$image_name"/versions --jq '.[] | select(.metadata.container.tags | any(. == "development")) | .id')"
-          if [[ $dev_version_ids =~ ^[[:digit:][:space:]]+$ ]]; then
-            info_sub "Deleting old development images for $image_name: $dev_version_ids"
-            for version_id in $dev_version_ids; do
-              gh api -X DELETE "/orgs/$GITHUB_ORG/packages/container/$image_name/versions/$version_id"
-            done
-          fi
-        fi
-      fi
-
       info_sub "Building and pushing Docker image for $action@$APP_VERSION"
 
       build_args=("${default_build_args[@]}")
       build_args+=(
         --build-arg ACTION="$action"
-        -t "$image_url:$APP_VERSION"
+        --tag "$ghcr_image_url:$APP_VERSION"
       )
+
+      for push_registry in $push_registries; do
+        build_args+=(
+          --tag "$push_registry/actions/$action:$APP_VERSION"
+        )
+      done
 
       if [[ $APP_VERSION != "development" ]]; then
         # If we're building images from the "release" branch, tag all images with latest.
         build_args+=(
-          -t "$image_url:latest"
+          --tag "$ghcr_image_url:latest"
         )
+        for push_registry in $push_registries; do
+          build_args+=(
+            --tag "$push_registry/actions/$action:latest"
+          )
+        done
       fi
 
       docker buildx build "${build_args[@]}" .
