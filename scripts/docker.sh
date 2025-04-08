@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
 # It's important to note that all of this script relies on heavy assumptions on how
 # it's called. Right now that currently means it's called in CI by either the
 # shell/ci/release/dryrun.sh or shell/ci/release/release.sh scripts in devbase and
@@ -12,29 +14,32 @@
 # "development" if running in dry-run mode and we take advantage of the fact that the
 # entirety of the current branch is squashed into the HEAD commit.
 
+REPO_SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+DEVBASE_LIB_DIR="$REPO_SCRIPTS_DIR/../.bootstrap/shell/lib"
+
+# shellcheck source=../.bootstrap/shell/lib/box.sh
+source "$DEVBASE_LIB_DIR"/box.sh
+
+# shellcheck source=../.bootstrap/shell/lib/docker.sh
+source "$DEVBASE_LIB_DIR"/docker.sh
+
+# shellcheck source=../.bootstrap/shell/lib/logging.sh
+source "$DEVBASE_LIB_DIR"/logging.sh
+
 if [[ -z $APP_VERSION ]]; then
-  echo "APP_VERSION must be passed to script." >&2
-  exit 1
+  fatal "APP_VERSION must be passed to script."
 fi
 
 if [[ ! -f "actions.yaml" ]]; then
-  echo "Script must be ran in root of repository (actions.yaml needs to exist)." >&2
-  exit 1
+  fatal "Script must be ran in root of repository (actions.yaml needs to exist)."
 fi
 
-# This is just to authenticate gcloud in CI, but we can't use the $CI variable because
-# it's unset by the releasing script.
-if [[ -z $GOOGLE_SERVICE_ACCOUNT ]]; then
-  # You have to write this to a file to authenticate gcloud service accounts, can't
-  # read it from stdin like you can with docker auth (it is deleted right after auth).
-  echo "$GCLOUD_SERVICE_ACCOUNT" >gcloud-auth-key.json
+# Wrapper around gojq to make it easier to use with yaml files.
+yamlq() {
+  "$REPO_SCRIPTS_DIR"/shell-wrapper.sh yq.sh --raw-output --compact-output "$@"
+}
 
-  gcloud auth activate-service-account \
-    circleci-rw@outreach-docker.iam.gserviceaccount.com \
-    --key-file=gcloud-auth-key.json
-
-  rm -f gcloud-auth-key.json
-fi
+GITHUB_ORG="${GITHUB_ORG:-$(get_box_field org)}"
 
 actions_to_build=()
 if [[ $APP_VERSION == "development" ]]; then
@@ -46,16 +51,15 @@ if [[ $APP_VERSION == "development" ]]; then
   fi
 else
   # Build and push all docker images for each action.
-  mapfile -t actions_to_build <<<"$(yq -rc '.actions[]' actions.yaml)"
+  mapfile -t actions_to_build <<<"$(yamlq '.actions[]' actions.yaml)"
 fi
 
 if [[ ${#actions_to_build[@]} -eq 0 ]]; then
   if [[ $APP_VERSION != "development" ]]; then
-    echo "No actions were detected to be built, but we're on the main branch so this is a problem." >&2
-    exit 1
+    fatal "No actions were detected to be built, but we're on the main branch so this is a problem."
   fi
 
-  echo "No actions to build, skipping."
+  info "No actions to build, skipping."
   exit 0
 fi
 
@@ -65,38 +69,37 @@ default_build_args=(
   --push
 )
 
-yq -rc '.actions[]' actions.yaml | while read -r action; do
+yamlq '.actions[]' actions.yaml | while read -r action; do
+  ghcr_image_name="action-$action"
+  ghcr_image_url="ghcr.io/$GITHUB_ORG/$ghcr_image_name"
+  push_registries="$(get_docker_push_registries)"
   for action_to_build in "${actions_to_build[@]}"; do
     if [ "$action_to_build" == "$action" ]; then
       # Action actually exists in yaml list of created actions.
-
-      if [[ $APP_VERSION == "development" ]]; then
-        # Before we push another development tag for each action, we should delete the old one if it exists.
-        if [[ $(gcloud container images list-tags gcr.io/outreach-docker/actions/"$action" | grep -c development) -gt 0 ]]; then
-          # If we're in this conditional it means a development image already exists, but we can't just blindly
-          # delete it before making sure it doesn't have any other tags attached to it.
-          if [[ $(gcloud container images list-tags gcr.io/outreach-docker/actions/"action" | grep development | awk '{print $2}' | awk -F , '{ for (i = 1; i <= NF; i++) print $i }' | wc -l) -eq 1 ]]; then
-            # If we're in this conditional it means that the development image only had the development tag on it, so
-            # we're safe to delete it.
-            echo " -> Found old development image for $action@$APP_VERSION, deleting before pushing new one"
-            gcloud container images delete --force-delete-tags --quiet gcr.io/outreach-docker/actions/"$action":development
-          fi
-        fi
-      fi
-
-      echo " -> Building and pushing docker image for $action@$APP_VERSION"
+      info_sub "Building and pushing Docker image for $action@$APP_VERSION"
 
       build_args=("${default_build_args[@]}")
       build_args+=(
         --build-arg ACTION="$action"
-        -t "gcr.io/outreach-docker/actions/$action:$APP_VERSION"
+        --tag "$ghcr_image_url:$APP_VERSION"
       )
+
+      for push_registry in $push_registries; do
+        build_args+=(
+          --tag "$push_registry/actions/$action:$APP_VERSION"
+        )
+      done
 
       if [[ $APP_VERSION != "development" ]]; then
         # If we're building images from the "release" branch, tag all images with latest.
         build_args+=(
-          -t "gcr.io/outreach-docker/actions/$action:latest"
+          --tag "$ghcr_image_url:latest"
         )
+        for push_registry in $push_registries; do
+          build_args+=(
+            --tag "$push_registry/actions/$action:latest"
+          )
+        done
       fi
 
       docker buildx build "${build_args[@]}" .

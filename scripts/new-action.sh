@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
 if [[ ! -d actions ]]; then
   echo "Script needs to be ran from the root of the repository." >&2
   exit 1
 fi
 
 if [[ $# -ne 1 ]]; then
-  echo "Name of action must be passed to script (if you're using make do \"make new-action name=<name>\")." >&2
+  echo "Nameof action must be passed to script (if you're using make do \"make new-action name=<name>\")." >&2
   exit 1
 fi
 newAction="$1"
@@ -23,7 +27,7 @@ if [[ $newAction =~ [[:space:]] ]]; then
   exit 1
 fi
 
-yq -rc '.actions[]' actions.yaml | while read -r action; do
+"$DIR"/shell-wrapper.sh yq.sh '.actions[]' actions.yaml | while read -r action; do
   if [[ $action == "$newAction" ]]; then
     echo "Action named \"$action\" already exists." >&2
     exit 1
@@ -40,8 +44,6 @@ name: $newAction
 on:
   workflow_call:
     secrets:
-      OUTREACH_DOCKER_JSON:
-        required: true
       PAT_OUTREACH_CI:
         required: false
     inputs:
@@ -54,13 +56,10 @@ jobs:
   run:
     runs-on: ubuntu-latest
     container:
-      image: gcr.io/outreach-docker/actions/$newAction:\${{ inputs.image_tag }}
+      image: ghcr.io/getoutreach/action-$newAction:\${{ inputs.image_tag }}
       env:
         GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: \${{ secrets.PAT_OUTREACH_CI }}
-      credentials:
-        username: _json_key
-        password: \${{ secrets.OUTREACH_DOCKER_JSON }}
     steps:
       - run: /usr/local/bin/action
 
@@ -75,7 +74,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     container:
-      image: gcr.io/outreach-docker/actions/$newAction:local
+      image: ghcr.io/getoutreach/action-$newAction:local
       env:
         GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: \${{ secrets.GITHUB_TOKEN }}
@@ -137,5 +136,6 @@ func RunAction(ctx context.Context, client *github.Client, actionCtx *actions.Gi
 
 EOF
 
-yq -yi '.actions += ["'"$newAction"'"]' actions.yaml
+./scripts/shell-wrapper.sh yq.sh --yaml-output '.actions += ["'"$newAction"'"]' actions.yaml >actions.yaml.new
+mv actions.yaml.new actions.yaml
 make fmt

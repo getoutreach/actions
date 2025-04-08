@@ -6,7 +6,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     container:
-      image: gcr.io/outreach-docker/actions/brokenbranch:local
+      image: ghcr.io/getoutreach/action-brokenbranch:local
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
 if [[ ! -d actions ]]; then
   echo "Script needs to be ran from the root of the repository." >&2
   exit 1
@@ -18,15 +20,17 @@ if [[ $# -eq 1 ]]; then
   echo " -> Custom payload \"$payload\" requested"
 fi
 
-if [[ "$(yq -rc "any(.actions[] == \"$action\"; .)" actions.yaml)" == "false" ]]; then
+if [[ "$("$DIR"/shell-wrapper.sh yq.sh --raw-output --compact-output "any(.actions[] == \"$action\"; .)" actions.yaml)" == "false" ]]; then
   echo "Action set to be tested (\"$action\") does not exist." >&2
   exit 1
 fi
 
-echo " -> Building local docker image (gcr.io/outreach-docker/actions/$action:local)"
+image_url="ghcr.io/getoutreach/action-$action"
+
+echo " -> Building local docker image ($image_url:local)"
 
 docker buildx build --platform "linux/amd64" \
-  --ssh default -t "gcr.io/outreach-docker/actions/$action:local" \
+  --ssh default -t "$image_url:local" \
   --build-arg ACTION="$action" --load .
 
 act_args=(
@@ -67,4 +71,4 @@ fi
 echo " -> Using payload \"$payload\" for detected event trigger"
 echo " -> Running local test for \"$action\""
 
-./scripts/shell-wrapper.sh gobin.sh github.com/nektos/act@v0.2.26 "${act_args[@]}" "$on"
+mise exec -- act "${act_args[@]}" "$on"

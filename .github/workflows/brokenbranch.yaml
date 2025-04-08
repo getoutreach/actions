@@ -3,8 +3,6 @@ name: brokenbranch
 on:
   workflow_call:
     secrets:
-      OUTREACH_DOCKER_JSON:
-        required: true
       PAT_OUTREACH_CI:
         required: false
       SLACK_TOKEN:
@@ -49,7 +47,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     container:
-      image: gcr.io/outreach-docker/actions/brokenbranch:${{ inputs.image_tag }}
+      image: ghcr.io/getoutreach/action-brokenbranch:${{ inputs.image_tag }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
@@ -61,8 +59,5 @@ jobs:
         GH_APP_ID: ${{ secrets.GH_APP_ID }}
         GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}
         GH_APP_PRIVATE_KEY_BASE64: ${{ secrets.GH_APP_PRIVATE_KEY_BASE64 }}
-      credentials:
-        username: _json_key
-        password: ${{ secrets.OUTREACH_DOCKER_JSON }}
     steps:
       - run: /usr/local/bin/action
