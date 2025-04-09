@@ -3,6 +3,8 @@ name: brokenbranch
 on:
   workflow_call:
     secrets:
+      OUTREACH_DOCKER_JSON:
+        required: false
       PAT_OUTREACH_CI:
         required: false
       SLACK_TOKEN:
