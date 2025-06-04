@@ -9,7 +9,7 @@ import (
 	"context"
 
 	"github.com/getoutreach/goql"
-	"github.com/google/go-github/v68/github"
+	"github.com/google/go-github/v72/github"
 	"github.com/pkg/errors"
 )
 
