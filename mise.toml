@@ -1,2 +1,17 @@
+[task_config]
+includes = [".bootstrap/.mise/tasks"]
+
+## <<Stencil::Block(customMiseEnvironment)>>
+
+## <</Stencil::Block>>
+
 [tools]
-act = "latest"
+"npm:prettier" = "2"
+
+## <<Stencil::Block(customMiseTools)>>
+
+## <</Stencil::Block>>
+
+## <<Stencil::Block(extraMise)>>
+
+## <</Stencil::Block>>
