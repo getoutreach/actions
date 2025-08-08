@@ -9,7 +9,7 @@ includes = [".bootstrap/.mise/tasks"]
 "npm:prettier" = "2"
 
 ## <<Stencil::Block(customMiseTools)>>
-
+act = "latest"
 ## <</Stencil::Block>>
 
 ## <<Stencil::Block(extraMise)>>
