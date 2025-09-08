@@ -1,8 +1,6 @@
 module github.com/getoutreach/actions
 
-go 1.23.0
-
-toolchain go1.23.4
+go 1.24.0
 
 require (
 	github.com/bradleyfalzon/ghinstallation/v2 v2.16.0
@@ -11,7 +9,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/sethvargo/go-githubactions v1.3.1
 	github.com/slack-go/slack v0.17.3
-	golang.org/x/oauth2 v0.30.0
+	golang.org/x/oauth2 v0.31.0
 	gotest.tools/v3 v3.5.2
 )
 
