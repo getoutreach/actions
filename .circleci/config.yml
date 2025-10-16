@@ -38,7 +38,7 @@ test: &test
   ### Start parameters inserted by other modules
   ### End parameters inserted by other modules
   ## <<Stencil::Block(circleTestExtra)>>
-
+  docker_tag: latest
   ## <</Stencil::Block>>
 
 # Branches used for releasing code, pre-release or not
@@ -117,7 +117,7 @@ workflows:
           executor_name: oss-docker
           docker_image: ghcr.io/getoutreach/bootstrap/ci-oss
           ## <<Stencil::Block(circlePreReleaseDryRunExtra)>>
-
+          docker_tag: latest
           ## <</Stencil::Block>>
           requires:
             ## <<Stencil::Block(circlePreReleaseDryRunRequires)>>
