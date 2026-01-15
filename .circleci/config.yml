@@ -2,7 +2,7 @@
 # syntax, such as anchors, will be fixed automatically.
 version: 2.1
 orbs:
-  shared: getoutreach/shared@dev:2.35.0-rc.8
+  shared: getoutreach/shared@dev:first
   queue: eddiewebb/queue@2.2.1
   ## <<Stencil::Block(CircleCIExtraOrbs)>>
 
@@ -114,8 +114,11 @@ workflows:
       - shared/pre-release: &pre-release
           dryrun: true
           context: *contexts
-          executor_name: testbed-machine
+          executor_name: oss-docker
+          docker_image: ghcr.io/getoutreach/bootstrap/ci-oss
           ## <<Stencil::Block(circlePreReleaseDryRunExtra)>>
+          docker_tag: latest
+          setup_remote_docker: true
           ## <</Stencil::Block>>
           requires:
             ## <<Stencil::Block(circlePreReleaseDryRunRequires)>>
