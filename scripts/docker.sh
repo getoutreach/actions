@@ -66,9 +66,13 @@ if [[ ${#actions_to_build[@]} -eq 0 ]]; then
   exit 0
 fi
 
-if in_ci_environment && ! (docker --help | grep -wq buildx); then
-  info "Installing docker buildx plugin"
-  sudo apt-get install --yes docker-buildx
+if in_ci_environment; then
+  if ! docker --help | grep -wq buildx; then
+    info "Installing docker buildx plugin"
+    sudo apt-get install --yes docker-buildx
+  fi
+  # Ensure the Docker daemon is running
+  sudo systemctl start docker.service
 fi
 
 default_build_args=(
