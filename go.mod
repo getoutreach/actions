@@ -9,7 +9,7 @@ require (
 	github.com/getoutreach/goql v1.13.5
 	github.com/google/go-github/v72 v72.0.0
 	github.com/pkg/errors v0.9.1
-	github.com/sethvargo/go-githubactions v1.3.1
+	github.com/sethvargo/go-githubactions v1.3.2
 	github.com/slack-go/slack v0.17.3
 	golang.org/x/oauth2 v0.30.0
 	gotest.tools/v3 v3.5.2
