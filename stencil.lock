@@ -2,10 +2,10 @@ version: v1.43.0
 modules:
     - name: github.com/getoutreach/devbase
       url: https://github.com/getoutreach/devbase
-      version: malept/fix/ghcr-login-with-packages-token
+      version: v2.35.0-rc.10
     - name: github.com/getoutreach/stencil-actions
       url: https://github.com/getoutreach/stencil-actions
-      version: v0.4.8-rc.1
+      version: v0.4.8-rc.2
     - name: github.com/getoutreach/stencil-base
       url: https://github.com/getoutreach/stencil-base
       version: v0.18.0-rc.5
@@ -14,10 +14,10 @@ modules:
       version: v1.17.1
     - name: github.com/getoutreach/stencil-discovery
       url: https://github.com/getoutreach/stencil-discovery
-      version: v1.8.10
+      version: v1.8.11-rc.1
     - name: github.com/getoutreach/stencil-golang
       url: https://github.com/getoutreach/stencil-golang
-      version: v1.30.0-rc.3
+      version: v1.30.0-rc.4
 files:
     - name: .circleci/config.yml
       template: .circleci/config.yml.tpl
