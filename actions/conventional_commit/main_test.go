@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/google/go-github/v72/github"
+	"github.com/google/go-github/v75/github"
 	"gotest.tools/v3/assert"
 )
 

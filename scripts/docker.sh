@@ -26,6 +26,9 @@ source "$DEVBASE_LIB_DIR"/docker.sh
 # shellcheck source=../.bootstrap/shell/lib/logging.sh
 source "$DEVBASE_LIB_DIR"/logging.sh
 
+# shellcheck source=../.bootstrap/shell/lib/shell.sh
+source "$DEVBASE_LIB_DIR"/shell.sh
+
 if [[ -z $APP_VERSION ]]; then
   fatal "APP_VERSION must be passed to script."
 fi
@@ -61,6 +64,11 @@ if [[ ${#actions_to_build[@]} -eq 0 ]]; then
 
   info "No actions to build, skipping."
   exit 0
+fi
+
+if in_ci_environment && ! docker --help | grep -wq buildx; then
+  info "Installing docker buildx plugin"
+  sudo apt-get install --yes docker-buildx
 fi
 
 default_build_args=(
