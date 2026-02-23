@@ -6,7 +6,7 @@ toolchain go1.25.7
 
 require (
 	github.com/bradleyfalzon/ghinstallation/v2 v2.17.0
-	github.com/getoutreach/goql v1.13.5
+	github.com/getoutreach/goql v1.13.6
 	github.com/google/go-github/v75 v75.0.0
 	github.com/pkg/errors v0.9.1
 	github.com/sethvargo/go-githubactions v1.3.2
