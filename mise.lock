@@ -6,13 +6,11 @@ backend = "aqua:nektos/act"
 
 [tools.act."platforms.linux-arm64"]
 checksum = "sha256:d6376316eb1d82fbe693b097d60a2199b923f3c3d14d79e749130cf93dddff00"
-checksum_source = "mise-versions"
 url = "https://github.com/nektos/act/releases/download/v0.2.94/act_Linux_arm64.tar.gz"
 url_api = "https://api.github.com/repos/nektos/act/releases/assets/696297237"
 
 [tools.act."platforms.linux-x64"]
 checksum = "sha256:33e6748e3c07affb6855f19fb7a28bc6c344c1d0888fae0564e6d34d4a71915a"
-checksum_source = "mise-versions"
 url = "https://github.com/nektos/act/releases/download/v0.2.94/act_Linux_x86_64.tar.gz"
 url_api = "https://api.github.com/repos/nektos/act/releases/assets/696297200"
 
@@ -23,13 +21,11 @@ url_api = "https://api.github.com/repos/nektos/act/releases/assets/696297201"
 
 [tools.act."platforms.macos-x64"]
 checksum = "sha256:0843730c8b201e914798d3f00e7f4fca3bcbcf1818370f238056dae611c85dd5"
-checksum_source = "mise-versions"
 url = "https://github.com/nektos/act/releases/download/v0.2.94/act_Darwin_x86_64.tar.gz"
 url_api = "https://api.github.com/repos/nektos/act/releases/assets/696297197"
 
 [tools.act."platforms.windows-x64"]
 checksum = "sha256:ad6910dc0d16c1550854a67a1ae9404afe9f1b5f262480252135089dcc07305b"
-checksum_source = "mise-versions"
 url = "https://github.com/nektos/act/releases/download/v0.2.94/act_Windows_x86_64.zip"
 url_api = "https://api.github.com/repos/nektos/act/releases/assets/696297270"
 
