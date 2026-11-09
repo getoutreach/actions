@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# Not managed by stencil: stencil-golang only generates this file for
+# `commands`, and the actions live in actions/<name>. Releasing it is
+# enabled by releaseOptions.force in service.yaml.
+project_name: actions
+builds:
+  - main: ./actions/brokenbranch
+    id: &brokenbranch brokenbranch
+    binary: *brokenbranch
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - "-w -s"
+    env:
+      - CGO_ENABLED=0
+  - main: ./actions/commitguard
+    id: &commitguard commitguard
+    binary: *commitguard
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - "-w -s"
+    env:
+      - CGO_ENABLED=0
+  - main: ./actions/conventional_commit
+    id: &conventional_commit conventional_commit
+    binary: *conventional_commit
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - "-w -s"
+    env:
+      - CGO_ENABLED=0
+
+archives: []
+checksum:
+  name_template: "checksums.txt"
+release:
+  # We handle releasing via semantic-release
+  disable: true
