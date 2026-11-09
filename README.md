@@ -18,7 +18,8 @@ Please read the [CONTRIBUTING.md](CONTRIBUTING.md) document for guidelines on de
 <!-- <<Stencil::Block(overview)>> -->
 
 This repository houses importable GitHub Actions that can be used in other repositories.
-These actions are written in Go and executed via a Dockerfile within the workflow itself.
+These actions are written in Go. The reusable workflows download each action's binary from
+this repository's GitHub releases and run it on an `ubuntu-slim` runner.
 
 ### Creating a new Action
 
