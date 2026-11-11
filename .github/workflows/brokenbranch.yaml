@@ -25,6 +25,7 @@ on:
     inputs:
       image_tag:
         type: string
+        description: "Release to run the action from: latest, or a version such as 1.2.3"
         default: latest
         required: false
       branch:
@@ -47,19 +48,35 @@ on:
 
 jobs:
   run:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/getoutreach/action-brokenbranch:${{ inputs.image_tag }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
-        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-        GITHUB_BRANCH: ${{ inputs.branch }}
-        IGNORED_CHECKS: ${{ inputs.ignored_checks }}
-        SLACK_CHANNEL: ${{ inputs.slack_channel }}
-        DM_COMMITTER: ${{ inputs.dm_committer }}
-        GH_APP_ID: ${{ secrets.GH_APP_ID }}
-        GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}
-        GH_APP_PRIVATE_KEY_BASE64: ${{ secrets.GH_APP_PRIVATE_KEY_BASE64 }}
+    # ubuntu-slim has no Docker daemon, so run the release binary instead
+    # of the action's image.
+    runs-on: ubuntu-slim
     steps:
-      - run: /usr/local/bin/action
+      - name: Download action
+        working-directory: ${{ runner.temp }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          tag=()
+          if [[ $IMAGE_TAG != latest ]]; then
+            tag=("v${IMAGE_TAG#v}")
+          fi
+          gh release download "${tag[@]}" --repo getoutreach/actions \
+            --pattern 'actions_*_linux_amd64.tar.gz' --pattern checksums.txt
+          sha256sum --check --ignore-missing checksums.txt
+          tar -xzf actions_*_linux_amd64.tar.gz brokenbranch
+      - name: Run action
+        working-directory: ${{ runner.temp }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_OUTREACH_CI: ${{ secrets.PAT_OUTREACH_CI }}
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          GITHUB_BRANCH: ${{ inputs.branch }}
+          IGNORED_CHECKS: ${{ inputs.ignored_checks }}
+          SLACK_CHANNEL: ${{ inputs.slack_channel }}
+          DM_COMMITTER: ${{ inputs.dm_committer }}
+          GH_APP_ID: ${{ secrets.GH_APP_ID }}
+          GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}
+          GH_APP_PRIVATE_KEY_BASE64: ${{ secrets.GH_APP_PRIVATE_KEY_BASE64 }}
+        run: ./brokenbranch
