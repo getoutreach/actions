@@ -37,9 +37,6 @@ does a few things:
 - Creates a test workflow file in `test/`
 - Creates a directory to define the action with boilerplate Go code in `actions/`
 
-When the action image is created in GHCR, make sure that you set it from "Internal" to
-"Public", and that the admin of the container is the same squad as the owner of this repo.
-
 ### Testing an Action
 
 You can test your action using the `act` CLI (`nektos/act`) with the following command:
