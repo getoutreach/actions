@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+name: rerun_e2e
+on:
+  workflow_call:
+    secrets:
+      CIRCLECI_API_TOKEN:
+        required: true
+    inputs:
+      image_tag:
+        type: string
+        description: "Release to run the action from: latest, or a version such as 1.2.3"
+        default: latest
+        required: false
+      e2e_job_name:
+        type: string
+        description: "Name of the CircleCI job that runs the E2E tests"
+        default: shared/e2e
+        required: false
+
+jobs:
+  run:
+    # CircleCI only starts a pipeline on a push, so re-run the E2E job that
+    # devbase halted on a draft PR when the PR is marked ready for review or
+    # gets the run-e2e label.
+    if: github.event.pull_request.head.repo.full_name == github.repository && (github.event.action == 'ready_for_review' || (github.event.action == 'labeled' && github.event.label.name == 'run-e2e' && github.event.pull_request.draft))
+    # Run one at a time per PR, so a ready_for_review and a run-e2e label
+    # event don't both re-run the job.
+    concurrency:
+      group: rerun-e2e-${{ github.repository }}-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    # ubuntu-slim has no Docker daemon, so run the release binary instead
+    # of the action's image.
+    runs-on: ubuntu-slim
+    timeout-minutes: 60
+    steps:
+      - name: Download action
+        working-directory: ${{ runner.temp }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          tag=()
+          if [[ $IMAGE_TAG != latest ]]; then
+            tag=("v${IMAGE_TAG#v}")
+          fi
+          gh release download "${tag[@]}" --repo getoutreach/actions \
+            --pattern 'actions_*_linux_amd64.tar.gz' --pattern checksums.txt
+          sha256sum --check --ignore-missing checksums.txt
+          tar -xzf actions_*_linux_amd64.tar.gz rerun_e2e
+      - name: Run action
+        working-directory: ${{ runner.temp }}
+        env:
+          CIRCLECI_TOKEN: ${{ secrets.CIRCLECI_API_TOKEN }}
+          E2E_JOB_NAME: ${{ inputs.e2e_job_name }}
+        run: ./rerun_e2e
