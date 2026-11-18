@@ -49,19 +49,35 @@ on:
     inputs:
       image_tag:
         type: string
+        description: "Release to run the action from: latest, or a version such as 1.2.3"
         default: latest
         required: false
 
 jobs:
   run:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/getoutreach/action-$newAction:\${{ inputs.image_tag }}
-      env:
-        GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
-        PAT_OUTREACH_CI: \${{ secrets.PAT_OUTREACH_CI }}
+    # ubuntu-slim has no Docker daemon, so run the release binary.
+    runs-on: ubuntu-slim
     steps:
-      - run: /usr/local/bin/action
+      - name: Download action
+        working-directory: \${{ runner.temp }}
+        env:
+          GH_TOKEN: \${{ github.token }}
+          IMAGE_TAG: \${{ inputs.image_tag }}
+        run: |
+          tag=()
+          if [[ \$IMAGE_TAG != latest ]]; then
+            tag=("v\${IMAGE_TAG#v}")
+          fi
+          gh release download "\${tag[@]}" --repo getoutreach/actions \\
+            --pattern 'actions_*_linux_amd64.tar.gz' --pattern checksums.txt
+          sha256sum --check --ignore-missing checksums.txt
+          tar -xzf actions_*_linux_amd64.tar.gz $newAction
+      - name: Run action
+        working-directory: \${{ runner.temp }}
+        env:
+          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+          PAT_OUTREACH_CI: \${{ secrets.PAT_OUTREACH_CI }}
+        run: ./$newAction
 
 EOF
 
@@ -95,7 +111,7 @@ import (
 	"time"
 
 	"github.com/getoutreach/actions/pkg/gh"
-	"github.com/google/go-github/v68/github"
+	"github.com/google/go-github/v75/github"
 	"github.com/pkg/errors"
 	actions "github.com/sethvargo/go-githubactions"
 )
@@ -122,7 +138,7 @@ func main() {
 	}
 
 	if err := RunAction(ctx, client, ghContext); err != nil {
-		actions.Errorf(err.Error())
+		actions.Errorf("%s", err.Error())
 		return
 	}
 	exitCode = 0
@@ -138,4 +154,29 @@ EOF
 
 ./scripts/shell-wrapper.sh yq.sh --yaml-output '.actions += ["'"$newAction"'"]' actions.yaml >actions.yaml.new
 mv actions.yaml.new actions.yaml
+
+# Add a release build, so the workflow can download the action's binary.
+# Inserted as text before `archives:` to keep the file's comments and anchors.
+build="$(
+  cat <<EOF
+  - main: ./actions/$newAction
+    id: &$newAction $newAction
+    binary: *$newAction
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - "-w -s"
+    env:
+      - CGO_ENABLED=0
+EOF
+)"
+# Blank lines are held back, so the build lands right after the last one.
+BUILD="$build" awk '
+  /^$/ { blank++; next }
+  /^archives:/ { print ENVIRON["BUILD"] }
+  { for (; blank > 0; blank--) print ""; print }
+' .goreleaser.yml >.goreleaser.yml.new
+mv .goreleaser.yml.new .goreleaser.yml
 make fmt

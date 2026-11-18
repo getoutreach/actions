@@ -33,7 +33,9 @@ The name of the action cannot contain uppercase letters or spaces. Running the c
 does a few things:
 
 - Adds an entry to the `actions` list in `actions.yaml`.
-- Creates a reusable (from other repositories) workflow file in `.github/workflows/`
+- Adds a build for the action to `.goreleaser.yml`, so releases include its binary.
+- Creates a reusable (from other repositories) workflow file in `.github/workflows/` that
+  downloads the action's binary from a release and runs it on `ubuntu-slim`.
 - Creates a test workflow file in `test/`
 - Creates a directory to define the action with boilerplate Go code in `actions/`
 
