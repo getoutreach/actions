@@ -37,6 +37,17 @@ builds:
       - "-w -s"
     env:
       - CGO_ENABLED=0
+  - main: ./actions/rerun_e2e
+    id: &rerun_e2e rerun_e2e
+    binary: *rerun_e2e
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - "-w -s"
+    env:
+      - CGO_ENABLED=0
 
 archives: []
 checksum:

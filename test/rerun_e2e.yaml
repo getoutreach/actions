@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+name: rerun_e2e local test
+on: pull_request
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/getoutreach/action-rerun_e2e:local
+      env:
+        CIRCLECI_TOKEN: ${{ secrets.CIRCLECI_API_TOKEN }}
+        E2E_JOB_NAME: shared/e2e
+    steps:
+      - run: /usr/local/bin/action
