@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+name: Pull Request Download Action
+on:
+  pull_request:
+    paths:
+      - .github/actions/download/**
+      - .github/workflows/pull_request-download-action.yaml
+
+permissions:
+  contents: read
+
+jobs:
+  download:
+    name: Download Action
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download one action
+        uses: ./.github/actions/download
+        with:
+          name: commitguard
+      - name: Download a second action in the same job, with an empty version
+        uses: ./.github/actions/download
+        with:
+          name: conventional_commit
+          version: ""
+      - name: Check the binaries
+        run: ls -l "$RUNNER_TEMP"/{commitguard,conventional_commit}

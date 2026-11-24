@@ -18,8 +18,9 @@ Please read the [CONTRIBUTING.md](CONTRIBUTING.md) document for guidelines on de
 <!-- <<Stencil::Block(overview)>> -->
 
 This repository houses importable GitHub Actions that can be used in other repositories.
-These actions are written in Go. The reusable workflows download each action's binary from
-this repository's GitHub releases and run it on an `ubuntu-slim` runner.
+These actions are written in Go. The reusable workflows use the shared
+[`download`](.github/actions/download/action.yaml) action to get each action's binary from
+this repository's GitHub releases, then run it on an `ubuntu-slim` runner.
 
 ### Creating a new Action
 
@@ -35,7 +36,7 @@ does a few things:
 - Adds an entry to the `actions` list in `actions.yaml`.
 - Adds a build for the action to `.goreleaser.yml`, so releases include its binary.
 - Creates a reusable (from other repositories) workflow file in `.github/workflows/` that
-  downloads the action's binary from a release and runs it on `ubuntu-slim`.
+  downloads the action's binary and runs it on `ubuntu-slim`.
 - Creates a test workflow file in `test/`
 - Creates a directory to define the action with boilerplate Go code in `actions/`
 
