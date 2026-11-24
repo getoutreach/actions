@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action
+name: Download action
+description: >-
+  Download an action's binary from a getoutreach/actions release, check its
+  checksum, and leave it in the runner's temp directory.
+inputs:
+  name:
+    description: Name of the action, as listed in actions.yaml
+    required: true
+  version:
+    description: "Release to download from: latest, or a version such as 1.2.3"
+    default: latest
+
+runs:
+  using: composite
+  steps:
+    - name: Download and verify
+      shell: bash
+      working-directory: ${{ runner.temp }}
+      env:
+        GH_TOKEN: ${{ github.token }}
+        ACTION_NAME: ${{ inputs.name }}
+        VERSION: ${{ inputs.version }}
+      run: |
+        tag=()
+        if [[ $VERSION != latest ]]; then
+          tag=("v${VERSION#v}")
+        fi
+        gh release download "${tag[@]}" --repo getoutreach/actions \
+          --pattern 'actions_*_linux_amd64.tar.gz' --pattern checksums.txt
+        sha256sum --check --ignore-missing checksums.txt
+        tar -xzf actions_*_linux_amd64.tar.gz "$ACTION_NAME"
