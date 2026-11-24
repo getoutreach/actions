@@ -59,19 +59,10 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - name: Download action
-        working-directory: \${{ runner.temp }}
-        env:
-          GH_TOKEN: \${{ github.token }}
-          IMAGE_TAG: \${{ inputs.image_tag }}
-        run: |
-          tag=()
-          if [[ \$IMAGE_TAG != latest ]]; then
-            tag=("v\${IMAGE_TAG#v}")
-          fi
-          gh release download "\${tag[@]}" --repo getoutreach/actions \\
-            --pattern 'actions_*_linux_amd64.tar.gz' --pattern checksums.txt
-          sha256sum --check --ignore-missing checksums.txt
-          tar -xzf actions_*_linux_amd64.tar.gz $newAction
+        uses: getoutreach/actions/.github/actions/download@main
+        with:
+          name: $newAction
+          version: \${{ inputs.image_tag }}
       - name: Run action
         working-directory: \${{ runner.temp }}
         env:
