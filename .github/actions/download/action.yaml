@@ -8,7 +8,7 @@ inputs:
     description: Name of the action, as listed in actions.yaml
     required: true
   version:
-    description: "Release to download from: latest, or a version such as 1.2.3"
+    description: "Release to download from: latest (also used when empty), or a version such as 1.2.3"
     default: latest
 
 runs:
@@ -26,7 +26,7 @@ runs:
         trap 'rm -rf "$scratch"' EXIT
         cd "$scratch" || exit 1
         tag=()
-        if [[ $VERSION != latest ]]; then
+        if [[ -n $VERSION && $VERSION != latest ]]; then
           tag=("v${VERSION#v}")
         fi
         gh release download "${tag[@]}" --repo getoutreach/actions \
