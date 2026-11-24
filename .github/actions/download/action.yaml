@@ -16,12 +16,15 @@ runs:
   steps:
     - name: Download and verify
       shell: bash
-      working-directory: ${{ runner.temp }}
       env:
         GH_TOKEN: ${{ github.token }}
         ACTION_NAME: ${{ inputs.name }}
         VERSION: ${{ inputs.version }}
       run: |
+        # Download into a scratch directory so the action can run more than once per job.
+        scratch="$(mktemp -d)"
+        trap 'rm -rf "$scratch"' EXIT
+        cd "$scratch" || exit 1
         tag=()
         if [[ $VERSION != latest ]]; then
           tag=("v${VERSION#v}")
@@ -29,4 +32,4 @@ runs:
         gh release download "${tag[@]}" --repo getoutreach/actions \
           --pattern 'actions_*_linux_amd64.tar.gz' --pattern checksums.txt
         sha256sum --check --ignore-missing checksums.txt
-        tar -xzf actions_*_linux_amd64.tar.gz "$ACTION_NAME"
+        tar -xzf actions_*_linux_amd64.tar.gz -C "$RUNNER_TEMP" "$ACTION_NAME"
