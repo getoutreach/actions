@@ -40,7 +40,7 @@ mkdir -p "actions/$newAction"
 
 cat <<EOF >.github/workflows/"$newAction".yaml
 # yaml-language-server: \$schema=https://json.schemastore.org/github-workflow
-name: $newAction
+name: "$newAction"
 on:
   workflow_call:
     secrets:
@@ -61,7 +61,7 @@ jobs:
       - name: Download action
         uses: getoutreach/actions/.github/actions/download@main
         with:
-          name: $newAction
+          name: "$newAction"
           version: \${{ inputs.image_tag }}
       - name: Run action
         working-directory: \${{ runner.temp }}
